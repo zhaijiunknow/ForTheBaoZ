@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04ae778eea6448946b6cc33ba3ffdf46, type: 3}
+  m_Name: Item1
+  m_EditorClassIdentifier: 
+  itemName: "\u70B9\u8D5E"
+  icon: {fileID: 21300000, guid: 804cb6d53acd62d4d931e969149521fc, type: 3}
+  CD: 1
+  nowcd: 0
+  goodtype: 2
+  permanentAdd: 0
+  tempAdd: 2
+  duration: 5
+  startMultiplier: 1
+  startBoostTime: 0
+  enableDecay: 0
+  decayEndTime: 0
+  decayEndRate: 0
+  reduceEnemyPermanent: 0
+  reduceEnemyPermanentRate: 0.5
+  reduceEnemyPermanentTime: 0
+  reduceEnemyTemp: 0
+  reduceEnemyTempRate: 0.5
+  reduceEnemyTempTime: 10
+  isShield: 0
+  shieldDuration: 0
+  multiItemBonuses:
+  - itemCount: 10
+    thrustBonus: 1.3
+    duration: 0
+  - itemCount: 66
+    thrustBonus: 1.5
+    duration: 0
+  - itemCount: 188
+    thrustBonus: 2
+    duration: 0
+  - itemCount: 520
+    thrustBonus: 3
+    duration: 0

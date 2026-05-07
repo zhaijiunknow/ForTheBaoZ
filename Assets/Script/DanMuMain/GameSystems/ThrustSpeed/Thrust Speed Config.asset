@@ -1,0 +1,303 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb347a04b25b8ce48a49f444de7bf1ae, type: 3}
+  m_Name: Thrust Speed Config
+  m_EditorClassIdentifier: 
+  distanceStages:
+  - minDistance: -1000
+    maxDistance: -992
+    thrustRanges:
+    - minThrustDiff: 0
+      maxThrustDiff: 10
+      speed: 0.05
+    - minThrustDiff: 10
+      maxThrustDiff: 500
+      speed: 0.06
+    - minThrustDiff: 500
+      maxThrustDiff: 3500
+      speed: 0.07
+    - minThrustDiff: 3500
+      maxThrustDiff: 10000
+      speed: 0.08
+    - minThrustDiff: 10000
+      maxThrustDiff: 1000000
+      speed: 0.1
+  - minDistance: -992
+    maxDistance: -980
+    thrustRanges:
+    - minThrustDiff: 0
+      maxThrustDiff: 10
+      speed: 0.2
+    - minThrustDiff: 10
+      maxThrustDiff: 500
+      speed: 0.3
+    - minThrustDiff: 500
+      maxThrustDiff: 3500
+      speed: 0.35
+    - minThrustDiff: 3500
+      maxThrustDiff: 10000
+      speed: 0.4
+    - minThrustDiff: 10000
+      maxThrustDiff: 100000000
+      speed: 0.5
+  - minDistance: -980
+    maxDistance: -965
+    thrustRanges:
+    - minThrustDiff: 0
+      maxThrustDiff: 10
+      speed: 0.8
+    - minThrustDiff: 10
+      maxThrustDiff: 500
+      speed: 0.8
+    - minThrustDiff: 500
+      maxThrustDiff: 3500
+      speed: 0.85
+    - minThrustDiff: 3500
+      maxThrustDiff: 10000
+      speed: 0.9
+    - minThrustDiff: 10000
+      maxThrustDiff: 1000000
+      speed: 1
+  - minDistance: -965
+    maxDistance: -950
+    thrustRanges:
+    - minThrustDiff: 0
+      maxThrustDiff: 10
+      speed: 1
+    - minThrustDiff: 10
+      maxThrustDiff: 500
+      speed: 1.2
+    - minThrustDiff: 500
+      maxThrustDiff: 3500
+      speed: 1.5
+    - minThrustDiff: 3500
+      maxThrustDiff: 10000
+      speed: 1.8
+    - minThrustDiff: 10000
+      maxThrustDiff: 1000000
+      speed: 2
+  - minDistance: -950
+    maxDistance: -900
+    thrustRanges:
+    - minThrustDiff: 0
+      maxThrustDiff: 10
+      speed: 2
+    - minThrustDiff: 10
+      maxThrustDiff: 500
+      speed: 2.5
+    - minThrustDiff: 500
+      maxThrustDiff: 3500
+      speed: 3
+    - minThrustDiff: 3500
+      maxThrustDiff: 10000
+      speed: 4
+    - minThrustDiff: 10000
+      maxThrustDiff: 1000000
+      speed: 6
+  - minDistance: -900
+    maxDistance: -700
+    thrustRanges:
+    - minThrustDiff: 0
+      maxThrustDiff: 10
+      speed: 4
+    - minThrustDiff: 10
+      maxThrustDiff: 500
+      speed: 5
+    - minThrustDiff: 500
+      maxThrustDiff: 3500
+      speed: 10
+    - minThrustDiff: 3500
+      maxThrustDiff: 10000
+      speed: 17
+    - minThrustDiff: 10000
+      maxThrustDiff: 1000000
+      speed: 21
+  - minDistance: -700
+    maxDistance: -500
+    thrustRanges:
+    - minThrustDiff: 0
+      maxThrustDiff: 10
+      speed: 5
+    - minThrustDiff: 10
+      maxThrustDiff: 500
+      speed: 6
+    - minThrustDiff: 500
+      maxThrustDiff: 3500
+      speed: 10
+    - minThrustDiff: 3500
+      maxThrustDiff: 10000
+      speed: 15
+    - minThrustDiff: 10000
+      maxThrustDiff: 1000000
+      speed: 24
+  - minDistance: -500
+    maxDistance: 0
+    thrustRanges:
+    - minThrustDiff: 0
+      maxThrustDiff: 10
+      speed: 10
+    - minThrustDiff: 10
+      maxThrustDiff: 500
+      speed: 12
+    - minThrustDiff: 500
+      maxThrustDiff: 3500
+      speed: 18
+    - minThrustDiff: 3500
+      maxThrustDiff: 10000
+      speed: 25
+    - minThrustDiff: 10000
+      maxThrustDiff: 1000000
+      speed: 37
+  - minDistance: 0
+    maxDistance: 500
+    thrustRanges:
+    - minThrustDiff: 0
+      maxThrustDiff: 10
+      speed: 10
+    - minThrustDiff: 10
+      maxThrustDiff: 500
+      speed: 12
+    - minThrustDiff: 500
+      maxThrustDiff: 3500
+      speed: 18
+    - minThrustDiff: 3500
+      maxThrustDiff: 10000
+      speed: 25
+    - minThrustDiff: 10000
+      maxThrustDiff: 1000000
+      speed: 37
+  - minDistance: 500
+    maxDistance: 800
+    thrustRanges:
+    - minThrustDiff: 0
+      maxThrustDiff: 10
+      speed: 5
+    - minThrustDiff: 10
+      maxThrustDiff: 500
+      speed: 6
+    - minThrustDiff: 500
+      maxThrustDiff: 3500
+      speed: 10
+    - minThrustDiff: 3500
+      maxThrustDiff: 10000
+      speed: 15
+    - minThrustDiff: 10000
+      maxThrustDiff: 1000000
+      speed: 24
+  - minDistance: 800
+    maxDistance: 900
+    thrustRanges:
+    - minThrustDiff: 0
+      maxThrustDiff: 10
+      speed: 4
+    - minThrustDiff: 10
+      maxThrustDiff: 500
+      speed: 10
+    - minThrustDiff: 500
+      maxThrustDiff: 3500
+      speed: 17
+    - minThrustDiff: 3500
+      maxThrustDiff: 10000
+      speed: 21
+    - minThrustDiff: 10000
+      maxThrustDiff: 1000000
+      speed: 8
+  - minDistance: 900
+    maxDistance: 950
+    thrustRanges:
+    - minThrustDiff: 0
+      maxThrustDiff: 10
+      speed: 2
+    - minThrustDiff: 10
+      maxThrustDiff: 500
+      speed: 2.5
+    - minThrustDiff: 500
+      maxThrustDiff: 3500
+      speed: 3
+    - minThrustDiff: 3500
+      maxThrustDiff: 10000
+      speed: 4
+    - minThrustDiff: 10000
+      maxThrustDiff: 1000000
+      speed: 6
+  - minDistance: 950
+    maxDistance: 965
+    thrustRanges:
+    - minThrustDiff: 0
+      maxThrustDiff: 10
+      speed: 1
+    - minThrustDiff: 10
+      maxThrustDiff: 500
+      speed: 1.2
+    - minThrustDiff: 500
+      maxThrustDiff: 3500
+      speed: 1.5
+    - minThrustDiff: 3500
+      maxThrustDiff: 10000
+      speed: 1.8
+    - minThrustDiff: 10000
+      maxThrustDiff: 1000000
+      speed: 2
+  - minDistance: 965
+    maxDistance: 980
+    thrustRanges:
+    - minThrustDiff: 0
+      maxThrustDiff: 10
+      speed: 0.8
+    - minThrustDiff: 10
+      maxThrustDiff: 500
+      speed: 0.8
+    - minThrustDiff: 500
+      maxThrustDiff: 3500
+      speed: 0.85
+    - minThrustDiff: 3500
+      maxThrustDiff: 10000
+      speed: 0.9
+    - minThrustDiff: 10000
+      maxThrustDiff: 1000000
+      speed: 1
+  - minDistance: 980
+    maxDistance: 992
+    thrustRanges:
+    - minThrustDiff: 0
+      maxThrustDiff: 10
+      speed: 0.2
+    - minThrustDiff: 10
+      maxThrustDiff: 500
+      speed: 0.3
+    - minThrustDiff: 500
+      maxThrustDiff: 3500
+      speed: 0.35
+    - minThrustDiff: 3500
+      maxThrustDiff: 10000
+      speed: 0.4
+    - minThrustDiff: 10000
+      maxThrustDiff: 1000000
+      speed: 0.5
+  - minDistance: 992
+    maxDistance: 1000
+    thrustRanges:
+    - minThrustDiff: 0
+      maxThrustDiff: 10
+      speed: 0.05
+    - minThrustDiff: 10
+      maxThrustDiff: 500
+      speed: 0.06
+    - minThrustDiff: 500
+      maxThrustDiff: 3500
+      speed: 0.07
+    - minThrustDiff: 3500
+      maxThrustDiff: 10000
+      speed: 0.08
+    - minThrustDiff: 10000
+      maxThrustDiff: 1000000
+      speed: 0.1

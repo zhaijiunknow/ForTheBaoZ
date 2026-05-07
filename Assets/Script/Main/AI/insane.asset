@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75f6b890d07027844b47d465968da178, type: 3}
+  m_Name: insane
+  m_EditorClassIdentifier: 
+  difficulty: 3
+  baseDecisionDelay: 0.3
+  decisionRandomness: 0.1
+  quickResponseThreshold: 0.05
+  quickResponseMultiplier: 0.2
+  canPredictCombo: 1
+  predictionAccuracy: 0.8
+  predictionLeadTime: 0.5
