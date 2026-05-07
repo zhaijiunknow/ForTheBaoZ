@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(update-config)",
+      "mcp__UnityMCP__read_console"
+    ]
+  },
+  "enabledMcpjsonServers": [
+    "unity"
+  ]
+}
