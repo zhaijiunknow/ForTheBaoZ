@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5950b7e29da0c4e73aa9b4ec3fa9af51, type: 3}
+  m_Name: OptionData
+  m_EditorClassIdentifier: 
+  fontList:
+  - fontSize: 0
+    titleSize: 32
+    subSize: 24
+  - fontSize: 1
+    titleSize: 40
+    subSize: 28
+  - fontSize: 2
+    titleSize: 56
+    subSize: 32
+  PanelBackground: {r: 0.24705882, g: 0.21176471, b: 0.21176471, a: 0.98039216}
+  colorType:
+    light: {r: 1, g: 1, b: 1, a: 1}
+    dark: {r: 0, g: 0, b: 0, a: 1}

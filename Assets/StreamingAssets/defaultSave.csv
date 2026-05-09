@@ -1,0 +1,13 @@
+OptionName,,
+[Settings],,
+PresetProgress,0,0: no preset 1: has preset
+Lan,1,1: en 2: cn 3: jp
+Vibration,0,0: off 1: on
+FontSize,0,0: small 1: medium 2: large
+MasterVolume,10,max: 10
+Music,10,max: 10
+SoundEffect,10,max: 10
+Fullscreen,1,0: off 1: on
+,,
+[Game],,
+LevelProgress,0,

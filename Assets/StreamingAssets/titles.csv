@@ -1,0 +1,33 @@
+Name,1en,2cn,3jp
+Text,,,
+GameTitle,Your Game Title,你的游戏标题,ゲームタイトル
+Wait,Waiting,等待输入,入力待ち
+Saved,Changes saved,修改已保存,変更が保存されました
+Test,"If it is a long sentence, use Excel to edit and export CSV file.","如句子包含英文逗号, 请用Excel编辑并导出CSV文件","If it is a long sentence, use Excel to edit and export CSV file."
+,,,
+Button,,,
+CompletePreset,Complete Preset,完成设定,プリセットを完了
+StartGame,Game Start,开始游戏,ゲームを開始
+Option,Options,设置,オプション
+Credits,Credits,制作人员,クレジット
+Quit,Quit,离开,終了
+General,General,通用,一般
+Graphics,Graphics,显示,グラフィック
+Sound,Sound,声音,サウンド
+Keyboard,Keyboard,键盘设定,キーボード
+Gamepad,Gamepad,手柄设定,ゲームパッド
+ResetInput,Reset all,全部重置,すべてリセット
+ClosePanel,Back,返回,戻る
+CloseSubPanel,Back,返回,戻る
+Continue,Resume,继续游戏,再開
+GoTitle,Back to title,返回标题,タイトルに戻る
+,,,
+Input(Player map),,,
+Move,Move,移动,移動
+Jump,Jump,跳跃,ジャンプ
+OpenMenu,OpenMenu,菜单,メニュー
+,,,
+Input(UI map),,,
+Cancel,Cancel,返回,戻る
+Submit,Apply,应用,決定
+Navigate,Select,选择,選択

@@ -1,0 +1,25 @@
+OptionName,1en,2cn,3jp
+Button,,,
+Lan,Language,语言,言語
+,Default,do not,move this line
+,English,英语,英語
+,Chinese,中文,中国語
+end,Janpanese,日语,日本語
+,,,
+Vibration,Vibration,震动,振動
+,Off,关,オフ
+end,On,开,オン
+,,,
+FontSize,Font Size,字体,フォントサイズ
+,Small,小,小
+,Middle,中,中
+end,Large,大,大
+,,,
+Fullscreen,Fullscreen,全屏,フルスクリーン
+,Off,关,オフ
+end,On,开,オン
+,,,
+Slider,,,
+MasterVolume,Master Volume,总音量,全体音量
+Music,Music,音乐音量,BGM音量
+SoundEffect,Sound Effects,音效音量,SE音量
