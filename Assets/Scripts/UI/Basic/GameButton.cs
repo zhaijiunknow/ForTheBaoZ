@@ -62,7 +62,7 @@ public class GameButton : MonoBehaviour, ISelectHandler, IDeselectHandler, IUpda
         {
             //for buttons
             case TitleName.StartGame:
-                SwitchScene(SceneName.Home);
+                SwitchScene(SceneName.Map);
                 SetGameStatus(GameStatus.Playing);
                 break;
             case TitleName.Quit:

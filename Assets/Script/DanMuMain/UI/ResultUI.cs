@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class ResultUI : BaseUI
@@ -15,7 +14,7 @@ public class ResultUI : BaseUI
 
     public void OnRestartGameClick()
     {
-        SceneManager.LoadScene(0);
+        GameManager.SwitchScene(SceneName.Map);
     }
-    
+
 }

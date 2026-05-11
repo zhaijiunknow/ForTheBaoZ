@@ -1,6 +1,6 @@
 public enum SceneName
 {
-    StartUp, Preset, Menu, Home,
+    StartUp, Preset, Menu, Map, Battle,
 }
 
 public enum InputType
