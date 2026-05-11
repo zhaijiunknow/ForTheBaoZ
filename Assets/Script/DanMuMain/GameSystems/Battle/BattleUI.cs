@@ -158,7 +158,23 @@ public class BattleUI : MonoBehaviour
         {
             str = "蓝方胜利";
         }
-        
+
+        if (GameManager.PendingBattleEntry != null)
+        {
+            if (UISystem.Ins != null && UISystem.Ins.resultUI != null)
+                UISystem.Ins.resultUI.Show(str);
+            else
+            {
+                GameManager.CompleteBattle(new BattleResultData
+                {
+                    sourceNodeId = GameManager.PendingBattleEntry.sourceNodeId,
+                    isVictory = thrustDis >= 0,
+                });
+                GameManager.SwitchScene(SceneName.Map);
+            }
+            yield break;
+        }
+
         UISystem.Ins.resultUI.Show(str);
     }
 

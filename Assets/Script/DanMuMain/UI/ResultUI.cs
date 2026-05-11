@@ -14,6 +14,17 @@ public class ResultUI : BaseUI
 
     public void OnRestartGameClick()
     {
+        bool isVictory = txt != null && txt.text != "蓝方胜利";
+
+        if (GameManager.PendingBattleEntry != null)
+        {
+            GameManager.CompleteBattle(new BattleResultData
+            {
+                sourceNodeId = GameManager.PendingBattleEntry.sourceNodeId,
+                isVictory = isVictory,
+            });
+        }
+
         GameManager.SwitchScene(SceneName.Map);
     }
 

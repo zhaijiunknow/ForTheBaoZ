@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class RoguelikeManager : MonoBehaviour
 {
+    public static RoguelikeManager Instance { get; private set; }
+
     public List<RogueConfig> rogueConfigs = new List<RogueConfig>();
     public BattleUI battleUI;
     public MySkillManager myskill;
@@ -16,17 +18,26 @@ public class RoguelikeManager : MonoBehaviour
     public TextMeshProUGUI itemname;
     public TextMeshProUGUI itemintro;
 
-    // Start is called before the first frame update
+    void Awake()
+    {
+        Instance = this;
+    }
+
+    void OnDestroy()
+    {
+        if (Instance == this)
+            Instance = null;
+    }
+
     void Start()
     {
         int no = Random.Range(0, rogueConfigs.Count);
         SetChoiceButton(no);
     }
 
-    // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public void SetChoiceButton(int no)
@@ -60,22 +71,39 @@ public class RoguelikeManager : MonoBehaviour
         }
     }
 
+    public void ApplyMapReward(MapNodeType nodeType)
+    {
+        switch (nodeType)
+        {
+            case MapNodeType.Event:
+                AddSkill();
+                break;
+            case MapNodeType.Treasure:
+                AddMaxSkillCount();
+                break;
+        }
+    }
 
-
-
-    #region Èâ¸ëÊÂ¼þº¯Êý
+    #region ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½
     public void AddSkill()
     {
+        if (battleUI == null || myskill == null || battleUI.items.Count == 0)
+            return;
+
         int add = Random.Range(0, battleUI.items.Count);
         myskill.myskillbox.Add(add);
     }
 
     public void AddMaxSkillCount()
     {
-        if (myskill.skillcount<9)
+        if (myskill == null)
+            return;
+
+        if (myskill.skillcount < 9)
         {
             myskill.skillcount++;
-            battleUI.SetGameButton();
+            if (battleUI != null)
+                battleUI.SetGameButton();
         }
     }
 

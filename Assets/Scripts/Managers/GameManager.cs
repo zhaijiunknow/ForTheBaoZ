@@ -17,6 +17,9 @@ public class GameManager : MonoBehaviour
     public static DataManager Data { get; private set; }
     public static AudioManager Audio { get; private set; }
     public static InputManager NewInput { get; private set; }
+    public static MapGraphData CurrentMapRun { get; private set; }
+    public static BattleEntryData PendingBattleEntry { get; private set; }
+    public static BattleResultData LastBattleResult { get; private set; }
     // public static YourManager YourName { get; private set; }  //step 2
 
     static List<IGameManager> _managerList;
@@ -110,6 +113,37 @@ public class GameManager : MonoBehaviour
     {
         CurScene = _scene;
         SceneManager.LoadScene(_scene.ToString());
+    }
+
+    public static void StartMapRun(MapGraphData mapGraph)
+    {
+        CurrentMapRun = mapGraph;
+        PendingBattleEntry = null;
+        LastBattleResult = null;
+    }
+
+    public static void QueueBattle(BattleEntryData battleEntry)
+    {
+        PendingBattleEntry = battleEntry;
+        LastBattleResult = null;
+    }
+
+    public static void CompleteBattle(BattleResultData battleResult)
+    {
+        LastBattleResult = battleResult;
+        PendingBattleEntry = null;
+    }
+
+    public static void ClearBattleResult()
+    {
+        LastBattleResult = null;
+    }
+
+    public static void ClearMapRun()
+    {
+        CurrentMapRun = null;
+        PendingBattleEntry = null;
+        LastBattleResult = null;
     }
 
 }
