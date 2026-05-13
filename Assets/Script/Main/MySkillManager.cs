@@ -23,43 +23,58 @@ public class MySkillManager : MonoBehaviour
 
     public List<QTEItemConfig> qTEItemConfigs;
 
-    // Start is called before the first frame update
     void Start()
     {
-        // ³õÊ¼»¯¶ÓÁÐ£¬×î´ó¼ÇÂ¼5Ãë£¬×î¶à5¸ö¼¼ÄÜ
         _skillQueue = new SkillSequenceQueue(5f, 5);
 
-        // ¶©ÔÄÊÂ¼þ
         _skillQueue.OnSkillAdded += OnSkillAdded;
         _skillQueue.OnSkillRemoved += OnSkillRemoved;
         _skillQueue.OnSequenceMatched += OnSequenceMatched;
 
+        GameManager.ApplySavedSkillState(this);
     }
+
+    public List<int> GetPlayerSkillBoxSnapshot()
+    {
+        return myskillbox == null ? new List<int>() : new List<int>(myskillbox);
+    }
+
+    public void ApplySavedSkillState(int savedSkillCount, List<int> savedSkillBox)
+    {
+        skillcount = Mathf.Max(0, savedSkillCount);
+        if (myskillbox == null)
+            myskillbox = new List<int>();
+        else
+            myskillbox.Clear();
+
+        if (savedSkillBox != null)
+            myskillbox.AddRange(savedSkillBox);
+    }
+
     public bool CheckForCombo(QTEItemConfig qteitem)
     {
         var result = _skillQueue.MatchSequence(qteitem.combo, exactOrder: qteitem.exactOrder, maxTimeWindow: qteitem.maxComboTime);
 
         if (result.IsMatch)
         {
-            Debug.Log($"Á¬¶Î´¥·¢: {result}");
+            Debug.Log($"ï¿½ï¿½ï¿½Î´ï¿½ï¿½ï¿½: {result}");
             _skillQueue.Clear();
         }
-        
+
         return result.IsMatch;
     }
     void OnSkillAdded(SkillSequenceQueue.SkillNode node)
     {
-        Debug.Log($"¼¼ÄÜÌí¼Ó: {node}");
+        Debug.Log($"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: {node}");
     }
     void OnSkillRemoved(SkillSequenceQueue.SkillNode node)
     {
-        Debug.Log($"¼¼ÄÜÒÆ³ý: {node}");
+        Debug.Log($"ï¿½ï¿½ï¿½ï¿½ï¿½Æ³ï¿½: {node}");
     }
     void OnSequenceMatched(SkillSequenceQueue.SequenceMatchResult result)
     {
-        Debug.Log($"ÐòÁÐÆ¥Åä: {result}");
+        Debug.Log($"ï¿½ï¿½ï¿½ï¿½Æ¥ï¿½ï¿½: {result}");
     }
-    // Update is called once per frame
     void Update()
     {
     }

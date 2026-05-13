@@ -11,3 +11,6 @@ Fullscreen,1,0: off 1: on
 ,,
 [Game],,
 LevelProgress,0,
+HasRunSave,0,
+ResumeScene,0,
+RunSaveVersion,1,

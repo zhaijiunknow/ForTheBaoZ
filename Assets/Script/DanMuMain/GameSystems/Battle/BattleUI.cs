@@ -1,13 +1,8 @@
 using DG.Tweening;
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
-using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class BattleUI : MonoBehaviour
@@ -19,14 +14,6 @@ public class BattleUI : MonoBehaviour
     public ItemEffectSystem buleSystem;
     public MySkillManager myskill;
     public List<ItemConfig> items;
-    //public ItemConfig item1;
-    //public ItemConfig item2;
-    //public ItemConfig item3;
-    //public ItemConfig item4;
-    //public ItemConfig item5;
-    //public ItemConfig item6;
-    //public ItemConfig item7;
-    //public ItemConfig item8;
     public Text redThrustText;
     public Text blueThrustText;
     public Text redPerThrustText;
@@ -40,109 +27,117 @@ public class BattleUI : MonoBehaviour
     public Text buleRevealTimeText;
     public Text redFinishTimeText;
     public Text buleFinishTimeText;
+    public Text obsessionText;
+    public Text phaseText;
+    public Text stopoverText;
+    public Text foodText;
+    public Text checkpointTitleText;
+    public Text checkpointDescText;
+    public GameObject checkpointPanel;
+    public GameObject stopoverPanel;
     public Image redImg;
     public Image buleImg;
     public InputField propCount;
     public GameObject reversalGo;
     public Transform myprop;
     public Font Aa;
-    
+    public BattleFlowController flowController;
+    public BattleRunState runState;
+    public BattlePhaseController phaseController;
+    public StopoverController stopoverController;
+    public CafeteriaController cafeteriaController;
+    public SetBonusResolver setBonusResolver;
+
     private float targetRedFill;
     private float targetBlueFill;
-    private float currentRedFill;
-    private float currentBlueFill;
     public float endDistance = 100f;
+
     private void Start()
     {
         timebackText.text = "";
+        if (flowController == null)
+            flowController = FindObjectOfType<BattleFlowController>();
+        if (runState == null)
+            runState = FindObjectOfType<BattleRunState>();
+        if (phaseController == null)
+            phaseController = FindObjectOfType<BattlePhaseController>();
+        if (stopoverController == null)
+            stopoverController = FindObjectOfType<StopoverController>();
+        if (cafeteriaController == null)
+            cafeteriaController = FindObjectOfType<CafeteriaController>();
+        if (setBonusResolver == null)
+            setBonusResolver = FindObjectOfType<SetBonusResolver>();
         ReStartGameTimer();
         SetGameButton();
         SetItemCD();
+        RefreshCheckpointIntro();
+        RefreshOverlayState();
     }
 
     private void OnDisable()
     {
         SetItemCD();
     }
-    #region Timer
+
     public void SetItemCD()
     {
         for (int i = 0; i < items.Count; i++)
-        {
             items[i].nowcd = false;
-        }
     }
+
     public void SetGameButton()
     {
         for (int i = myprop.childCount; i > 0; i--)
-        {
-            myprop.GetChild(i - 1).gameObject.SetActive(false);
+            Destroy(myprop.GetChild(i - 1).gameObject);
 
-        }
         for (int i = 0; i < myskill.skillcount; i++)
         {
             if (i >= myskill.myskillbox.Count)
-            {
                 break;
-            }
-            GameObject button = Instantiate(new GameObject(),myprop);
+
+            int itemIndex = myskill.myskillbox[i];
+            GameObject button = new GameObject($"SkillButton_{i}");
+            button.transform.SetParent(myprop, false);
+            button.AddComponent<RectTransform>();
             button.AddComponent<Image>();
-            button.AddComponent<Button>();
-            GameObject text = Instantiate(new GameObject(), button.transform);
-            text.AddComponent<Text>();
-            Text t = text.GetComponent<Text>();
-            t.text = items[myskill.myskillbox[i]].itemName;
+            Button clickButton = button.AddComponent<Button>();
+
+            GameObject text = new GameObject("Label");
+            text.transform.SetParent(button.transform, false);
+            RectTransform textRect = text.AddComponent<RectTransform>();
+            textRect.anchorMin = Vector2.zero;
+            textRect.anchorMax = Vector2.one;
+            textRect.offsetMin = Vector2.zero;
+            textRect.offsetMax = Vector2.zero;
+
+            Text t = text.AddComponent<Text>();
+            t.text = items[itemIndex].itemName;
             t.color = Color.black;
             t.font = Aa;
             t.resizeTextForBestFit = true;
             t.alignment = TextAnchor.MiddleCenter;
-            switch (myskill.myskillbox[i])
-            {
-                case 0:
-                    button.GetComponent<Button>().onClick.AddListener(OnClick_RedItem1);
-                    break;
-                case 1:
-                    button.GetComponent<Button>().onClick.AddListener(OnClick_RedItem2);
-                    break;
-                case 2:
-                    button.GetComponent<Button>().onClick.AddListener(OnClick_RedItem3);
-                    break;
-                case 3:
-                    button.GetComponent<Button>().onClick.AddListener(OnClick_RedItem4);
-                    break;
-                case 4:
-                    button.GetComponent<Button>().onClick.AddListener(OnClick_RedItem5);
-                    break;
-                case 5:
-                    button.GetComponent<Button>().onClick.AddListener(OnClick_RedItem6);
-                    break;
-                case 6:
-                    button.GetComponent<Button>().onClick.AddListener(OnClick_RedItem7);
-                    break;
-                case 7:
-                    button.GetComponent<Button>().onClick.AddListener(OnClick_RedItem8);
-                    break;
-            }
+
+            int capturedIndex = itemIndex;
+            clickButton.onClick.AddListener(() => UseRedItem(capturedIndex));
         }
     }
+
     public void ReStartGameTimer()
     {
         DynamicData.GameStart = false;
         StartCoroutine(TimeStarBack());
     }
 
-    public float startingTime = 180f; // 3 minutes in seconds
+    public float startingTime = 180f;
     IEnumerator TimeStarBack()
     {
         DynamicData.TimerBack = startingTime;
-        
+
         while (DynamicData.TimerBack > 0)
         {
             if (DynamicData.GameStart)
-            {
                 DynamicData.TimerBack -= Time.deltaTime;
-            }
-            
+
             timebackText.text = FormatTime(DynamicData.TimerBack);
             yield return null;
         }
@@ -151,29 +146,9 @@ public class BattleUI : MonoBehaviour
         var thrustDis = (int)(1000 + batMgr.redDistance) - (int)(2000 - (1000 + batMgr.redDistance));
         string str = "平手";
         if (thrustDis > 0)
-        {
             str = "红方胜利";
-        }
         else if (thrustDis < 0)
-        {
             str = "蓝方胜利";
-        }
-
-        if (GameManager.PendingBattleEntry != null)
-        {
-            if (UISystem.Ins != null && UISystem.Ins.resultUI != null)
-                UISystem.Ins.resultUI.Show(str);
-            else
-            {
-                GameManager.CompleteBattle(new BattleResultData
-                {
-                    sourceNodeId = GameManager.PendingBattleEntry.sourceNodeId,
-                    isVictory = thrustDis >= 0,
-                });
-                GameManager.SwitchScene(SceneName.Map);
-            }
-            yield break;
-        }
 
         UISystem.Ins.resultUI.Show(str);
     }
@@ -184,12 +159,14 @@ public class BattleUI : MonoBehaviour
         int seconds = Mathf.FloorToInt(time % 60);
         return string.Format("{0:00}:{1:00}", minutes, seconds);
     }
-    #endregion
 
     void Update()
     {
-        if (!DynamicData.GameStart) return;
-            
+        RefreshOverlayState();
+
+        if (!DynamicData.GameStart && (runState == null || !runState.isPausedForStopover))
+            return;
+
         redThrustText.text = $"红方总推力: {red.TotalThrust:F0}";
         blueThrustText.text = $"蓝方总推力: {bule.TotalThrust:F0}";
         redPerThrustText.text = $"红方永久推力: {red.permanentThrust:F0}";
@@ -198,255 +175,207 @@ public class BattleUI : MonoBehaviour
         blueTempThrustText.text = $"蓝方临时推力: {bule.TempThrust:F0}";
         redDisText.text = $"红方里程数： {(int)(1000 + batMgr.redDistance)}";
         buleDisText.text = $"蓝方里程数： {(int)(2000 - (1000 + batMgr.redDistance))}";
-        // 计算目标填充量
         float targetFill = Mathf.Clamp((1000 + batMgr.redDistance) / 2000f, 0, 1);
         targetRedFill = targetFill;
         targetBlueFill = 1 - targetFill;
 
         redImg.fillAmount = targetRedFill;
         buleImg.fillAmount = targetBlueFill;
-        
+
         float redVal = (int)(1000 + batMgr.redDistance);
         float blueVal = (int)(2000 - (1000 + batMgr.redDistance));
-        
+
         redFinishTimeText.transform.parent.gameObject.SetActive(redVal <= endDistance);
         buleFinishTimeText.transform.parent.gameObject.SetActive(blueVal <= endDistance);
-        
-        redFinishTimeText.text = $"{(int)(1000 + batMgr.redDistance)}m";
-        buleFinishTimeText.text = $"{(int)(2000 - (1000 + batMgr.redDistance))}m";
+        redFinishTimeText.text = $"{redVal}m";
+        buleFinishTimeText.text = $"{blueVal}m";
+
+        if (obsessionText != null && runState != null)
+            obsessionText.text = $"执念: {runState.obsession:F0}";
+        if (phaseText != null && runState != null)
+        {
+            BattleCheckpointData checkpoint = runState.GetNextCheckpoint();
+            phaseText.text = checkpoint == null
+                ? "阶段：终局"
+                : $"阶段 {runState.currentPhaseIndex + 1} / 目标 {checkpoint.targetProgress:F0}";
+        }
+        if (stopoverText != null && runState != null)
+            stopoverText.text = runState.isPausedForStopover ? "停靠中：等待选择" : $"连续跳过: {runState.skippedRestCount}";
+        if (foodText != null && runState != null)
+        {
+            FoodEntryData candidate = cafeteriaController != null ? cafeteriaController.PeekCurrentCandidate() : null;
+            string setBonus = setBonusResolver != null ? $" 套装倍率x{setBonusResolver.GetSequenceBonusMultiplier():F2}" : string.Empty;
+            foodText.text = candidate == null
+                ? $"食物数: {runState.foods.Count}{setBonus}"
+                : $"候选: {candidate.displayName} / 已有食物: {runState.foods.Count}{setBonus}";
+        }
     }
 
-    #region click
+    void RefreshOverlayState()
+    {
+        bool introOpen = !DynamicData.GameStart && runState != null && !runState.isPausedForStopover;
+        bool stopoverOpen = runState != null && runState.isPausedForStopover;
+        bool choosingRest = stopoverOpen && stopoverController != null && stopoverController.IsChoosingRest();
+
+        if (checkpointPanel != null)
+            checkpointPanel.SetActive(introOpen);
+        if (stopoverPanel != null)
+            stopoverPanel.SetActive(stopoverOpen);
+
+        SetStopoverActionVisibility(choosingRest);
+    }
+
+    public void RefreshCheckpointIntro()
+    {
+        if (runState == null)
+            return;
+
+        BattleCheckpointData checkpoint = runState.GetNextCheckpoint();
+        if (checkpointTitleText != null)
+            checkpointTitleText.text = checkpoint == null ? "终局阶段" : $"检查点 {runState.currentPhaseIndex + 1}";
+
+        if (checkpointDescText != null)
+        {
+            if (checkpoint == null)
+            {
+                checkpointDescText.text = "现实反击即将开始。\n保持当前构筑，准备进入终局冲刺。";
+            }
+            else
+            {
+                checkpointDescText.text =
+                    $"目标推进值：{checkpoint.targetProgress:F0}\n" +
+                    $"当前起始技能：{myskill.skillcount}\n" +
+                    "确认后开始这场连续飞升。";
+            }
+        }
+    }
+
+    public void OnStartBattleClick()
+    {
+        DynamicData.GameStart = true;
+        GameManager.SaveCurrentRun();
+        RefreshOverlayState();
+    }
+
+    void SetStopoverActionVisibility(bool choosingRest)
+    {
+        SetActiveIfFound("TakeRestButton", choosingRest);
+        SetActiveIfFound("SkipRestButton", choosingRest);
+        SetActiveIfFound("BuyFoodButton", !choosingRest);
+        SetActiveIfFound("RefreshFoodButton", !choosingRest);
+        SetActiveIfFound("UpgradeFoodButton", !choosingRest);
+    }
+
+    void SetActiveIfFound(string objectName, bool active)
+    {
+        Transform target = transform.Find($"StopoverPanel/{objectName}");
+        if (target != null)
+            target.gameObject.SetActive(active);
+    }
+
+    void UseRedItem(int itemIndex)
+    {
+        int count = ParseCount();
+        if (itemIndex < 0 || itemIndex >= items.Count)
+            return;
+
+        if (flowController != null)
+            flowController.RecordSkill(items[itemIndex]);
+        if (count > 0)
+            redSystem.UseItem(bule, items[itemIndex], count);
+        if (flowController != null)
+            flowController.ResolveCombo(redSystem, bule, count);
+    }
+
+    int ParseCount()
+    {
+        if (propCount == null || string.IsNullOrWhiteSpace(propCount.text))
+            return 1;
+
+        return int.TryParse(propCount.text, out int count) ? Mathf.Max(1, count) : 1;
+    }
 
     public void OnRestartGameClick()
     {
-        SceneManager.LoadScene(0);
+        GameManager.StartNewRun();
     }
 
     public void OnClick_AddRedClamp()
     {
         red.permanentThrust++;
     }
-    
-    public void OnClick_RedItem1()
-    {
-        int count = int.Parse(propCount.text);
-        if (!items[0].nowcd)
-        {
-            myskill._skillQueue.AddSkill(items[0].goodtype);
-        }
-        if (count > 0)
-            redSystem.UseItem(bule, items[0], count);
-        for (int i = 0; i < myskill.qTEItemConfigs.Count; i++) 
-        {
-            if (myskill.CheckForCombo(myskill.qTEItemConfigs[i]))
-            {
-                redSystem.UseItem(bule, myskill.qTEItemConfigs[i], count);
-                break;
-            }
-        }
-        
-    }
-    
-    public void OnClick_RedItem2()
-    {
-        int count = int.Parse(propCount.text);
-        if (!items[1].nowcd)
-        {
-            myskill._skillQueue.AddSkill(items[1].goodtype);
-        }
-        if (count > 0)
-            redSystem.UseItem(bule, items[1], count);
-        for (int i = 0; i < myskill.qTEItemConfigs.Count; i++)
-        {
-            if (myskill.CheckForCombo(myskill.qTEItemConfigs[i]))
-            {
-                redSystem.UseItem(bule, myskill.qTEItemConfigs[i], count);
-                break;
-            }
-        }
-    }
-    
-    public void OnClick_RedItem3()
-    {
-        int count = int.Parse(propCount.text);
-        if (!items[2].nowcd)
-        {
-            myskill._skillQueue.AddSkill(items[2].goodtype);
-        }
-        if (count > 0)
-            redSystem.UseItem(bule, items[2], count);
-        for (int i = 0; i < myskill.qTEItemConfigs.Count; i++)
-        {
-            if (myskill.CheckForCombo(myskill.qTEItemConfigs[i]))
-            {
-                redSystem.UseItem(bule, myskill.qTEItemConfigs[i], count);
-                break;
-            }
-        }
-    }
-    
-    public void OnClick_RedItem4()
-    {
-        int count = int.Parse(propCount.text);
-        if (!items[3].nowcd)
-        {
-            myskill._skillQueue.AddSkill(items[3].goodtype);
-        }
-        if (count > 0)
-            redSystem.UseItem(bule, items[3], count);
-        for (int i = 0; i < myskill.qTEItemConfigs.Count; i++)
-        {
-            if (myskill.CheckForCombo(myskill.qTEItemConfigs[i]))
-            {
-                redSystem.UseItem(bule, myskill.qTEItemConfigs[i], count);
-                break;
-            }
-        }
-    }
-    
-    public void OnClick_RedItem5()
-    {
-        int count = int.Parse(propCount.text);
-        if (!items[4].nowcd)
-        {
-            myskill._skillQueue.AddSkill(items[4].goodtype);
-        }
-        if (count > 0)
-            redSystem.UseItem(bule, items[4], count);
-        for (int i = 0; i < myskill.qTEItemConfigs.Count; i++)
-        {
-            if (myskill.CheckForCombo(myskill.qTEItemConfigs[i]))
-            {
-                redSystem.UseItem(bule, myskill.qTEItemConfigs[i], count);
-                break;
-            }
-        }
-    }
-    
-    public void OnClick_RedItem6()
-    {
-        int count = int.Parse(propCount.text);
-        if (!items[5].nowcd)
-        {
-            myskill._skillQueue.AddSkill(items[5].goodtype);
-        }
-        if (count > 0)
-            redSystem.UseItem(bule, items[5], count);
-        for (int i = 0; i < myskill.qTEItemConfigs.Count; i++)
-        {
-            if (myskill.CheckForCombo(myskill.qTEItemConfigs[i]))
-            {
-                redSystem.UseItem(bule, myskill.qTEItemConfigs[i], count);
-                break;
-            }
-        }
-    }
-    
-    public void OnClick_RedItem7()
-    {
-        int count = int.Parse(propCount.text);
-        if (!items[6].nowcd)
-        {
-            myskill._skillQueue.AddSkill(items[6].goodtype);
-        }
-        if (count > 0)
-            redSystem.UseItem(bule, items[6], count);
-        for (int i = 0; i < myskill.qTEItemConfigs.Count; i++)
-        {
-            if (myskill.CheckForCombo(myskill.qTEItemConfigs[i]))
-            {
-                redSystem.UseItem(bule, myskill.qTEItemConfigs[i], count);
-                break;
-            }
-        }
-    }
-    
-    public void OnClick_RedItem8()
-    {
-        int count = int.Parse(propCount.text);
-        if (!items[7].nowcd)
-        {
-            myskill._skillQueue.AddSkill(items[7].goodtype);
-        }
-        if (count > 0)
-            redSystem.UseItem(bule, items[7], count);
-        for (int i = 0; i < myskill.qTEItemConfigs.Count; i++)
-        {
-            if (myskill.CheckForCombo(myskill.qTEItemConfigs[i]))
-            {
-                redSystem.UseItem(bule, myskill.qTEItemConfigs[i], count);
-                break;
-            }
-        }
-    }
-    
+
+    public void OnClick_RedItem1() => UseRedItem(0);
+    public void OnClick_RedItem2() => UseRedItem(1);
+    public void OnClick_RedItem3() => UseRedItem(2);
+    public void OnClick_RedItem4() => UseRedItem(3);
+    public void OnClick_RedItem5() => UseRedItem(4);
+    public void OnClick_RedItem6() => UseRedItem(5);
+    public void OnClick_RedItem7() => UseRedItem(6);
+    public void OnClick_RedItem8() => UseRedItem(7);
+
     public void OnClick_AddBuleClamp()
     {
         bule.permanentThrust++;
     }
+
     public void Buleues(ItemConfig item)
     {
-        int count = int.Parse(propCount.text);
+        int count = ParseCount();
         if (count > 0)
             buleSystem.UseItem(red, item, count);
     }
-    public void OnClick_BuleItem1()
+
+    public void OnClick_BuleItem1() => Buleues(items[0]);
+    public void OnClick_BuleItem2() => Buleues(items[1]);
+    public void OnClick_BuleItem3() => Buleues(items[2]);
+    public void OnClick_BuleItem4() => Buleues(items[3]);
+    public void OnClick_BuleItem5() => Buleues(items[4]);
+    public void OnClick_BuleItem6() => Buleues(items[5]);
+    public void OnClick_BuleItem7() => Buleues(items[6]);
+    public void OnClick_BuleItem8() => Buleues(items[7]);
+
+    public void OnBuyFoodClick()
     {
-        int count = int.Parse(propCount.text);
-        if (count > 0)
-            buleSystem.UseItem(red, items[0], count);
+        if (cafeteriaController != null)
+            cafeteriaController.BuyCurrentCandidate();
     }
-    
-    public void OnClick_BuleItem2()
+
+    public void OnRefreshFoodClick()
     {
-        int count = int.Parse(propCount.text);
-        if (count > 0)
-            buleSystem.UseItem(red, items[1], count);
+        if (cafeteriaController != null)
+            cafeteriaController.RefreshCandidate();
     }
-   
-    public void OnClick_BuleItem3()
+
+    public void OnUpgradeFoodClick()
     {
-        int count = int.Parse(propCount.text);
-        if (count > 0)
-            buleSystem.UseItem(red, items[2], count);
+        if (cafeteriaController != null)
+            cafeteriaController.UpgradeLastOwnedFood();
     }
-    
-    public void OnClick_BuleItem4()
+
+    public void OnTakeRestClick()
     {
-        int count = int.Parse(propCount.text);
-        if (count > 0)
-            buleSystem.UseItem(red, items[3], count);
+        if (stopoverController != null)
+            stopoverController.TakeRest();
     }
-    
-    public void OnClick_BuleItem5()
+
+    public void OnSkipRestClick()
     {
-        int count = int.Parse(propCount.text);
-        if (count > 0)
-            buleSystem.UseItem(red, items[4], count);
+        if (stopoverController != null)
+            stopoverController.SkipRest();
     }
-    
-    public void OnClick_BuleItem6()
+
+    public void OnConfirmPreparationClick()
     {
-        int count = int.Parse(propCount.text);
-        if (count > 0)
-            buleSystem.UseItem(red, items[5], count);
+        if (stopoverController != null)
+            stopoverController.ConfirmPreparation();
     }
-    
-    public void OnClick_BuleItem7()
+
+    public void OnOpenRewardChoiceClick()
     {
-        int count = int.Parse(propCount.text);
-        if (count > 0)
-            buleSystem.UseItem(red, items[6], count);
+        if (stopoverController != null)
+            stopoverController.TriggerRewardChoice();
     }
-    
-    public void OnClick_BuleItem8()
-    {
-        int count = int.Parse(propCount.text);
-        if (count > 0)
-            buleSystem.UseItem(red, items[7], count);
-    }
-    #endregion
 
     public void Reversal()
     {
@@ -463,9 +392,9 @@ public class BattleUI : MonoBehaviour
         _currentTime = 100;
         if (isRed)
         {
-            redRevealTimeText.text = "100s"; // 初始值
+            redRevealTimeText.text = "100s";
             redRevealTimeText.transform.parent.gameObject.SetActive(true);
-            DOTween.To(() => _currentTime, x => 
+            DOTween.To(() => _currentTime, x =>
                 {
                     _currentTime = x;
                     redRevealTimeText.text = Mathf.CeilToInt(_currentTime) + "s";
@@ -477,9 +406,9 @@ public class BattleUI : MonoBehaviour
         }
         else
         {
-            buleRevealTimeText.text = "100s"; // 初始值
+            buleRevealTimeText.text = "100s";
             buleRevealTimeText.transform.parent.gameObject.SetActive(true);
-            DOTween.To(() => _currentTime, x => 
+            DOTween.To(() => _currentTime, x =>
                 {
                     _currentTime = x;
                     buleRevealTimeText.text = Mathf.CeilToInt(_currentTime) + "s";
@@ -489,19 +418,13 @@ public class BattleUI : MonoBehaviour
             ).SetEase(Ease.Linear)
             .OnComplete(() => buleRevealTimeText.transform.parent.gameObject.SetActive(false));
         }
-        
     }
 
     public void EndReversalTime(bool isRed)
     {
         if (isRed)
-        {
             redRevealTimeText.transform.parent.gameObject.SetActive(false);
-        }
         else
-        {
             buleRevealTimeText.transform.parent.gameObject.SetActive(false);
-        }
     }
-    
 }

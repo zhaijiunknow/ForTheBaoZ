@@ -1,10 +1,5 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
-using static UnityEngine.UI.Button;
-
 
 [CreateAssetMenu(menuName = "Game/RogueConfig")]
 public class RogueConfig : ScriptableObject
@@ -12,18 +7,19 @@ public class RogueConfig : ScriptableObject
     public string itemName;
     public Sprite icon;
 
-    [Header("事件描述")]
+    [Header("浜嬩欢浠嬬粛")]
+    [TextArea(3, 6)]
     public string itemIntro;
 
-    [Header("事件选项")]
+    [Header("浜嬩欢閫夐」")]
     public eventresult[] action;
-
-    public string[] ChoiceName;    
-
+    public string[] ChoiceName;
 }
 
 public enum eventresult
 {
     AddSkill,
     AddMaxSkillCount,
+    Recover,
+    Continue,
 }

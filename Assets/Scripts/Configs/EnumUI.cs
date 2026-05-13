@@ -18,5 +18,6 @@ public enum TitleName
 
 public enum OptionName
 {
-    None, PresetProgress, LevelProgress, Lan, Vibration, Contrast, FontSize, MasterVolume, Music, SoundEffect, Fullscreen
+    None, PresetProgress, LevelProgress, Lan, Vibration, Contrast, FontSize, MasterVolume, Music, SoundEffect, Fullscreen,
+    HasRunSave, ResumeScene, RunSaveVersion
 }

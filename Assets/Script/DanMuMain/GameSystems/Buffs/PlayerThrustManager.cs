@@ -65,7 +65,7 @@ public class PlayerThrustManager : MonoBehaviour
         IsShieldActive = false;
         Debug.Log($"🛡 {playerName} 防护罩结束");
     }
-    
+
     public void ApplyTempMultiplierBuff(float rate, float duration)
     {
         int id = Random.Range(1, int.MaxValue);
@@ -83,7 +83,6 @@ public class PlayerThrustManager : MonoBehaviour
 
     public void RemoveTempMultiplierBuff(float rate)
     {
-        // 防御性移除
         List<int> keysToRemove = new List<int>();
         foreach (var kv in multiplierStack)
             if (Mathf.Approximately(kv.Value, rate))
@@ -94,4 +93,12 @@ public class PlayerThrustManager : MonoBehaviour
         RecalcMultiplier();
     }
 
+    public void ClearTemporaryState()
+    {
+        StopAllCoroutines();
+        rawTempSum = 0f;
+        multiplierStack.Clear();
+        tempMultiplier = 1f;
+        IsShieldActive = false;
+    }
 }

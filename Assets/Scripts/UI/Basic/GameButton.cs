@@ -62,18 +62,19 @@ public class GameButton : MonoBehaviour, ISelectHandler, IDeselectHandler, IUpda
         {
             //for buttons
             case TitleName.StartGame:
-                SwitchScene(SceneName.Map);
-                SetGameStatus(GameStatus.Playing);
+                GameManager.StartNewRun();
                 break;
             case TitleName.Quit:
                 Application.Quit();
                 break;
             case TitleName.Continue:
-                UIController.instance.ContinueGame();
+                if (UIController.instance != null && UIController.instance.CurPanel == PanelName.PanelPause)
+                    UIController.instance.ContinueGame();
+                else
+                    GameManager.ResumeSavedRun();
                 break;
             case TitleName.GoTitle:
-                GameManager.Data.ChangeSaveData(OptionName.LevelProgress, GameManager.Data.CurLevelProgress + 1); //sample for saving, can be removed
-                GameManager.Data.SaveGame();
+                GameManager.SaveCurrentRun();
                 SetGameStatus(GameStatus.Loaded);
                 GameManager.SwitchScene(SceneName.Menu);
                 break;

@@ -3,12 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-//如果你需要添加新的Manager，遵循注释(step1-4)添加即可
 [RequireComponent(typeof(DataManager))]
 [RequireComponent(typeof(AudioManager))]
 [RequireComponent(typeof(InputManager))]
-//[RequireComponent(typeof(YourManager))] //step 1
-
 public class GameManager : MonoBehaviour
 {
     public static GameStatus CurGameStatus { get; private set; }
@@ -17,10 +14,9 @@ public class GameManager : MonoBehaviour
     public static DataManager Data { get; private set; }
     public static AudioManager Audio { get; private set; }
     public static InputManager NewInput { get; private set; }
-    public static MapGraphData CurrentMapRun { get; private set; }
-    public static BattleEntryData PendingBattleEntry { get; private set; }
-    public static BattleResultData LastBattleResult { get; private set; }
-    // public static YourManager YourName { get; private set; }  //step 2
+    public static int SavedSkillCount { get; private set; }
+    public static List<int> SavedSkillBox { get; private set; } = new List<int>();
+    public static BattleProgressSaveData CurrentBattleSave { get; private set; }
 
     static List<IGameManager> _managerList;
     public static GameManager instance;
@@ -37,14 +33,11 @@ public class GameManager : MonoBehaviour
         _managerList = new List<IGameManager>();
 
         Data = GetComponent<DataManager>();
-        NewInput = GetComponent<InputManager>(); //Using Input will duplicate with the old input system
+        NewInput = GetComponent<InputManager>();
         Audio = GetComponent<AudioManager>();
-        // YourName = GetComponent<YourManager>();  //step 3
 
         _managerList.Add(Audio);
         _managerList.Add(NewInput);
-        // _managerList.Add(YourName); //step 4
-
     }
 
     void Start()
@@ -93,16 +86,16 @@ public class GameManager : MonoBehaviour
 
     public static void SetGameStatus(GameStatus _status)
     {
-        //设置game status
         CurGameStatus = _status;
 
-        //设置Time scale
         if (CurGameStatus == GameStatus.Paused)
             Time.timeScale = 0f;
         else
             Time.timeScale = 1f;
 
-        //设置input action map
+        if (NewInput == null)
+            return;
+
         if (CurGameStatus == GameStatus.Playing)
             NewInput.SwitchToPlayer();
         else
@@ -115,35 +108,160 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(_scene.ToString());
     }
 
-    public static void StartMapRun(MapGraphData mapGraph)
+    public static BattleProgressSaveData GetCurrentBattleSave()
     {
-        CurrentMapRun = mapGraph;
-        PendingBattleEntry = null;
-        LastBattleResult = null;
+        return CurrentBattleSave;
     }
 
-    public static void QueueBattle(BattleEntryData battleEntry)
+    public static void StartNewRun()
     {
-        PendingBattleEntry = battleEntry;
-        LastBattleResult = null;
+        ClearRunSave();
+        SavedSkillCount = 3;
+        SavedSkillBox = new List<int> { 0, 1, 2 };
+        CurrentBattleSave = CreateDefaultBattleSave();
+        SaveCurrentRun();
+        SetGameStatus(GameStatus.Playing);
+        SwitchScene(SceneName.Battle);
     }
 
-    public static void CompleteBattle(BattleResultData battleResult)
+    public static bool HasSavedRun()
     {
-        LastBattleResult = battleResult;
-        PendingBattleEntry = null;
+        return Data != null
+            && Data.SaveCSV != null
+            && Data.SaveCSV.GetSettingsInt(OptionName.HasRunSave) == 1
+            && Data.HasBattleRunData();
     }
 
-    public static void ClearBattleResult()
+    public static void SaveCurrentRun()
     {
-        LastBattleResult = null;
+        if (Data == null)
+            return;
+
+        CurrentBattleSave = CaptureBattleSaveFromScene() ?? CurrentBattleSave ?? CreateDefaultBattleSave();
+        Data.SaveBattleRunData(CurrentBattleSave);
+        Data.ChangeSaveData(OptionName.HasRunSave, 1);
+        Data.ChangeSaveData(OptionName.ResumeScene, 1);
+        Data.ChangeSaveData(OptionName.RunSaveVersion, CurrentBattleSave.version);
+        Data.SaveGame();
     }
 
-    public static void ClearMapRun()
+    public static bool LoadSavedRun()
     {
-        CurrentMapRun = null;
-        PendingBattleEntry = null;
-        LastBattleResult = null;
+        if (Data == null || !Data.HasBattleRunData())
+            return false;
+
+        BattleProgressSaveData battleSaveData = Data.LoadBattleRunData();
+        if (battleSaveData == null)
+        {
+            ClearRunSave();
+            return false;
+        }
+
+        CurrentBattleSave = battleSaveData;
+        SavedSkillCount = battleSaveData.skillCount;
+        SavedSkillBox = battleSaveData.mySkillBox != null ? new List<int>(battleSaveData.mySkillBox) : new List<int>();
+        return true;
     }
 
+    public static bool ResumeSavedRun()
+    {
+        if (!LoadSavedRun())
+            return false;
+
+        SetGameStatus(GameStatus.Playing);
+        SwitchScene(SceneName.Battle);
+        return true;
+    }
+
+    public static void ClearRunSave()
+    {
+        SavedSkillCount = 0;
+        SavedSkillBox = new List<int>();
+        CurrentBattleSave = null;
+
+        if (Data == null)
+            return;
+
+        Data.DeleteBattleRunData();
+        Data.ChangeSaveData(OptionName.HasRunSave, 0);
+        Data.ChangeSaveData(OptionName.ResumeScene, 0);
+        Data.ChangeSaveData(OptionName.RunSaveVersion, 1);
+        Data.SaveGame();
+    }
+
+    public static void ApplySavedSkillState(MySkillManager skillManager)
+    {
+        if (skillManager == null || SavedSkillBox == null || SavedSkillBox.Count == 0)
+            return;
+
+        skillManager.ApplySavedSkillState(SavedSkillCount, SavedSkillBox);
+    }
+
+    public static void CaptureSkillSnapshot()
+    {
+        MySkillManager skillManager = Object.FindObjectOfType<MySkillManager>();
+        if (skillManager == null)
+            return;
+
+        SavedSkillCount = skillManager.skillcount;
+        SavedSkillBox = skillManager.GetPlayerSkillBoxSnapshot();
+    }
+
+    static BattleProgressSaveData CreateDefaultBattleSave()
+    {
+        return new BattleProgressSaveData
+        {
+            version = 1,
+            checkpointId = "phase_1",
+            currentProgress = 0f,
+            currentPhaseIndex = 0,
+            nextTargetProgress = 300f,
+            isPausedForStopover = false,
+            isBossPhase = false,
+            skippedRestCount = 0,
+            sprintObsessionMultiplier = 1f,
+            obsession = 0f,
+            foods = new List<FoodEntryData>(),
+            reachedCheckpointIds = new List<string>(),
+            skillCount = SavedSkillCount,
+            mySkillBox = new List<int>(SavedSkillBox),
+            redDistance = 0f,
+            cafeteriaCandidateIndex = 0,
+            gameStarted = false,
+            remainingTime = 180f,
+        };
+    }
+
+    static BattleProgressSaveData CaptureBattleSaveFromScene()
+    {
+        BattleRunState runState = Object.FindObjectOfType<BattleRunState>();
+        BattleManager battleManager = Object.FindObjectOfType<BattleManager>();
+        CafeteriaController cafeteriaController = Object.FindObjectOfType<CafeteriaController>();
+        if (runState == null || battleManager == null)
+            return null;
+
+        CaptureSkillSnapshot();
+        BattleCheckpointData checkpoint = runState.GetNextCheckpoint();
+        return new BattleProgressSaveData
+        {
+            version = 1,
+            checkpointId = checkpoint != null ? checkpoint.checkpointId : "boss",
+            currentProgress = runState.currentProgress,
+            currentPhaseIndex = runState.currentPhaseIndex,
+            nextTargetProgress = checkpoint != null ? checkpoint.targetProgress : battleManager.winDistance,
+            isPausedForStopover = runState.isPausedForStopover,
+            isBossPhase = runState.isBossPhase,
+            skippedRestCount = runState.skippedRestCount,
+            sprintObsessionMultiplier = runState.sprintObsessionMultiplier,
+            obsession = runState.obsession,
+            foods = new List<FoodEntryData>(runState.foods),
+            reachedCheckpointIds = new List<string>(runState.reachedCheckpointIds),
+            skillCount = SavedSkillCount,
+            mySkillBox = new List<int>(SavedSkillBox),
+            redDistance = battleManager.redDistance,
+            cafeteriaCandidateIndex = cafeteriaController != null ? cafeteriaController.GetCandidateIndex() : 0,
+            gameStarted = DynamicData.GameStart,
+            remainingTime = DynamicData.TimerBack,
+        };
+    }
 }

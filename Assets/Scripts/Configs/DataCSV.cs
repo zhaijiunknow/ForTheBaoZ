@@ -111,15 +111,29 @@ public class DataCSV
         int row = GetRowIndex(rowName);
         csvData[row][col] = value;
     }
-
     public void SetCell(OptionName optionName, string value) //for OptionName only
     {
         int row = GetRowIndex(optionName);
         csvData[row][GameConfig.SettingsCol] = value;
     }
-    #endregion get and set
 
-    //private function
+    public void AppendRow(string[] row)
+    {
+        csvData.Add(row);
+        InitRowDic();
+        InitRowList();
+    }
+
+    public void InsertRow(int index, string[] row)
+    {
+        if (index < 0 || index > csvData.Count)
+            index = csvData.Count;
+
+        csvData.Insert(index, row);
+        InitRowDic();
+        InitRowList();
+    }
+    #endregion get and set
     void InitRowDic()
     {
         RowNameDic.Clear();

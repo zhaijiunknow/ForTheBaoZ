@@ -1,4 +1,4 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -18,6 +18,10 @@ public class RoguelikeManager : MonoBehaviour
     public TextMeshProUGUI itemname;
     public TextMeshProUGUI itemintro;
 
+    RogueConfig activeConfig;
+    Action completion;
+    readonly List<GameObject> spawnedButtons = new List<GameObject>();
+
     void Awake()
     {
         Instance = this;
@@ -29,69 +33,147 @@ public class RoguelikeManager : MonoBehaviour
             Instance = null;
     }
 
-    void Start()
+    public bool TryStartReward(Action onCompleted)
     {
-        int no = Random.Range(0, rogueConfigs.Count);
-        SetChoiceButton(no);
+        RogueConfig config = GetRandomConfig();
+        if (config == null)
+            return false;
+
+        activeConfig = config;
+        completion = onCompleted;
+        ShowConfig(config);
+        return true;
     }
 
-    void Update()
+    RogueConfig GetRandomConfig()
     {
+        List<RogueConfig> candidates = rogueConfigs.FindAll(config => config != null);
+        if (candidates.Count == 0)
+            return null;
 
+        return candidates[UnityEngine.Random.Range(0, candidates.Count)];
     }
 
-    public void SetChoiceButton(int no)
+    void ShowConfig(RogueConfig config)
     {
-        for (int i = buttonfield.childCount; i > 0; i--)
+        if (itemname != null)
+            itemname.text = config.itemName;
+        if (itemintro != null)
+            itemintro.text = config.itemIntro;
+        if (image != null)
+            image.sprite = config.icon;
+
+        SetChoiceButtons(config);
+    }
+
+    void SetChoiceButtons(RogueConfig config)
+    {
+        ClearButtons();
+
+        int choiceCount = Mathf.Min(config.ChoiceName != null ? config.ChoiceName.Length : 0, config.action != null ? config.action.Length : 0);
+        for (int i = 0; i < choiceCount; i++)
         {
-            buttonfield.GetChild(i - 1).gameObject.SetActive(false);
+            eventresult result = config.action[i];
+            GameObject buttonObject = new GameObject($"Choice_{i}", typeof(RectTransform), typeof(Image), typeof(Button));
+            buttonObject.transform.SetParent(buttonfield, false);
+
+            Image background = buttonObject.GetComponent<Image>();
+            background.color = Color.white;
+
+            Button button = buttonObject.GetComponent<Button>();
+            int index = i;
+            button.onClick.AddListener(() => SelectChoice(index));
+
+            GameObject textObject = new GameObject("Label", typeof(RectTransform), typeof(Text));
+            textObject.transform.SetParent(buttonObject.transform, false);
+
+            RectTransform textRect = textObject.GetComponent<RectTransform>();
+            textRect.anchorMin = Vector2.zero;
+            textRect.anchorMax = Vector2.one;
+            textRect.offsetMin = Vector2.zero;
+            textRect.offsetMax = Vector2.zero;
+
+            Text text = textObject.GetComponent<Text>();
+            text.text = config.ChoiceName[i];
+            text.color = Color.black;
+            text.font = Aa;
+            text.alignment = TextAnchor.MiddleCenter;
+            text.resizeTextForBestFit = true;
+
+            spawnedButtons.Add(buttonObject);
         }
-        for (int i = 0; i < rogueConfigs[no].ChoiceName.Length; i++)
-        {
-            GameObject button = Instantiate(new GameObject(), buttonfield);
-            button.AddComponent<Image>();
-            button.AddComponent<Button>();
-            GameObject text = Instantiate(new GameObject(), button.transform);
-            text.AddComponent<Text>();
-            Text t = text.GetComponent<Text>();
-            t.text = rogueConfigs[no].ChoiceName[i];
-            t.color = Color.black;
-            t.font = Aa;
-            t.resizeTextForBestFit = true;
-            t.alignment = TextAnchor.MiddleCenter;
-            switch (rogueConfigs[no].action[i])
-            {
-                case eventresult.AddSkill:
-                    button.GetComponent<Button>().onClick.AddListener(AddSkill);
-                    break;
-                case eventresult.AddMaxSkillCount:
-                    button.GetComponent<Button>().onClick.AddListener(AddMaxSkillCount);
-                    break;
-            }
-        }
     }
 
-    public void ApplyMapReward(MapNodeType nodeType)
+    void SelectChoice(int index)
     {
-        switch (nodeType)
+        if (activeConfig == null || activeConfig.action == null || index < 0 || index >= activeConfig.action.Length)
+            return;
+
+        ApplyResult(activeConfig.action[index]);
+        FinishNode();
+    }
+
+    void ApplyResult(eventresult result)
+    {
+        switch (result)
         {
-            case MapNodeType.Event:
+            case eventresult.AddSkill:
                 AddSkill();
                 break;
-            case MapNodeType.Treasure:
+            case eventresult.AddMaxSkillCount:
                 AddMaxSkillCount();
+                break;
+            case eventresult.Recover:
+            case eventresult.Continue:
                 break;
         }
     }
 
-    #region ����¼�����
+    void FinishNode()
+    {
+        ClearButtons();
+        if (itemname != null)
+            itemname.text = string.Empty;
+        if (itemintro != null)
+            itemintro.text = string.Empty;
+        if (image != null)
+            image.sprite = null;
+
+        Action finished = completion;
+        activeConfig = null;
+        completion = null;
+        finished?.Invoke();
+    }
+
+    void ClearButtons()
+    {
+        for (int i = 0; i < spawnedButtons.Count; i++)
+        {
+            if (spawnedButtons[i] != null)
+                Destroy(spawnedButtons[i]);
+        }
+
+        spawnedButtons.Clear();
+
+        if (buttonfield == null)
+            return;
+
+        for (int i = buttonfield.childCount - 1; i >= 0; i--)
+        {
+            Transform child = buttonfield.GetChild(i);
+            if (child != null && child.gameObject != null)
+                Destroy(child.gameObject);
+        }
+    }
+
     public void AddSkill()
     {
         if (battleUI == null || myskill == null || battleUI.items.Count == 0)
             return;
 
-        int add = Random.Range(0, battleUI.items.Count);
+        int add = UnityEngine.Random.Range(0, battleUI.items.Count);
         myskill.myskillbox.Add(add);
+        GameManager.SaveCurrentRun();
     }
 
     public void AddMaxSkillCount()
@@ -104,8 +186,7 @@ public class RoguelikeManager : MonoBehaviour
             myskill.skillcount++;
             if (battleUI != null)
                 battleUI.SetGameButton();
+            GameManager.SaveCurrentRun();
         }
     }
-
-    #endregion
 }
