@@ -57,7 +57,7 @@ public class MySkillManager : MonoBehaviour
 
         if (result.IsMatch)
         {
-            Debug.Log($"���δ���: {result}");
+            Debug.Log($"输入符号: {result}");
             _skillQueue.Clear();
         }
 
@@ -65,15 +65,15 @@ public class MySkillManager : MonoBehaviour
     }
     void OnSkillAdded(SkillSequenceQueue.SkillNode node)
     {
-        Debug.Log($"��������: {node}");
+        Debug.Log($"输入符号: {node}");
     }
     void OnSkillRemoved(SkillSequenceQueue.SkillNode node)
     {
-        Debug.Log($"�����Ƴ�: {node}");
+        Debug.Log($"输入符号: {node}");
     }
     void OnSequenceMatched(SkillSequenceQueue.SequenceMatchResult result)
     {
-        Debug.Log($"����ƥ��: {result}");
+        Debug.Log($"输出序列: {result}");
     }
     void Update()
     {

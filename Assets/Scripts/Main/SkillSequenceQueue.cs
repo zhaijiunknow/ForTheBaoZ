@@ -4,15 +4,15 @@ using System.Linq;
 using UnityEngine;
 
 /// <summary>
-/// ¼¼ÄÜÐòÁÐ¶ÓÁÐ¹ÜÀíÆ÷
-/// Ê¹ÓÃ¶ÓÁÐ+Ê±¼ä´Á¹ÜÀí¼¼ÄÜÐòÁÐ£¬Ö§³Ö×Ô¶¯ÇåÀí¹ýÆÚ¼ÇÂ¼ºÍÐòÁÐÆ¥Åä
+/// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½Ð¹ï¿½ï¿½ï¿½ï¿½ï¿½
+/// Ê¹ï¿½Ã¶ï¿½ï¿½ï¿½+Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð£ï¿½Ö§ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú¼ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¥ï¿½ï¿½
 /// </summary>
 public class SkillSequenceQueue
 {
-    #region ÄÚ²¿Êý¾Ý½á¹¹
+    #region ï¿½Ú²ï¿½ï¿½ï¿½ï¿½Ý½á¹¹
 
     /// <summary>
-    /// ¼¼ÄÜ¼ÇÂ¼½Úµã
+    /// ï¿½ï¿½ï¿½Ü¼ï¿½Â¼ï¿½Úµï¿½
     /// </summary>
     public class SkillNode
     {
@@ -36,7 +36,7 @@ public class SkillSequenceQueue
     }
 
     /// <summary>
-    /// ÐòÁÐÆ¥Åä½á¹û
+    /// ï¿½ï¿½ï¿½ï¿½Æ¥ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public class SequenceMatchResult
     {
@@ -46,7 +46,7 @@ public class SkillSequenceQueue
         public int StartIndex { get; set; }
         public float TotalTime { get; set; }
         public float MatchAccuracy { get; set; }
-        public object Tag { get; set; }  // ¸½¼ÓÊý¾Ý
+        public object Tag { get; set; }  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
         public SequenceMatchResult()
         {
@@ -57,13 +57,13 @@ public class SkillSequenceQueue
         public override string ToString()
         {
             return IsMatch ?
-                $"Æ¥Åä³É¹¦: {string.Join("¡ú", MatchedSequence)} (ºÄÊ±:{TotalTime:F2}s, ¾«¶È:{MatchAccuracy:F2})" :
-                "ÎÞÆ¥Åä";
+                $"Æ¥ï¿½ï¿½É¹ï¿½: {string.Join("ï¿½ï¿½", MatchedSequence)} (ï¿½ï¿½Ê±:{TotalTime:F2}s, ï¿½ï¿½ï¿½ï¿½:{MatchAccuracy:F2})" :
+                "ï¿½ï¿½Æ¥ï¿½ï¿½";
         }
     }
 
     /// <summary>
-    /// Í³¼ÆÐÅÏ¢
+    /// Í³ï¿½ï¿½ï¿½ï¿½Ï¢
     /// </summary>
     public struct QueueStats
     {
@@ -76,34 +76,34 @@ public class SkillSequenceQueue
 
         public override string ToString()
         {
-            return $"¶ÓÁÐÍ³¼Æ: {ActiveCount}/{TotalCount} ¸ö¼ÇÂ¼, Ê±¼ä¿ç¶È: {TimeSpan:F2}s";
+            return $"ï¿½ï¿½ï¿½ï¿½Í³ï¿½ï¿½: {ActiveCount}/{TotalCount} ï¿½ï¿½ï¿½ï¿½Â¼, Ê±ï¿½ï¿½ï¿½ï¿½: {TimeSpan:F2}s";
         }
     }
 
     #endregion
 
-    #region ÊôÐÔÓë×Ö¶Î
+    #region ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¶ï¿½
 
     private readonly LinkedList<SkillNode> _skillQueue = new();
-    private readonly List<SkillNode> _removedNodes = new(); // ÓÃÓÚ¼ÇÂ¼ÒÆ³ýµÄ½Úµã
+    private readonly List<SkillNode> _removedNodes = new(); // ï¿½ï¿½ï¿½Ú¼ï¿½Â¼ï¿½Æ³ï¿½ï¿½Ä½Úµï¿½
 
-    // ÅäÖÃ
-    private float _maxRecordTime = 10f; // Ä¬ÈÏ×î´ó¼ÇÂ¼Ê±¼ä£¨Ãë£©
-    private int _maxQueueSize = 5;     // ×î´ó¶ÓÁÐ´óÐ¡
-    private bool _autoCleanup = true;   // ÊÇ·ñ×Ô¶¯ÇåÀí¹ýÆÚ¼ÇÂ¼
+    // ï¿½ï¿½ï¿½ï¿½
+    private float _maxRecordTime = 10f; // Ä¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼Ê±ï¿½ä£¨ï¿½ë£©
+    private int _maxQueueSize = 5;     // ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½Ð¡
+    private bool _autoCleanup = true;   // ï¿½Ç·ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú¼ï¿½Â¼
 
-    // Í³¼Æ
+    // Í³ï¿½ï¿½
     private int _totalAddedCount = 0;
     private QueueStats _currentStats;
 
-    // ÊÂ¼þ
+    // ï¿½Â¼ï¿½
     public event Action<SkillNode> OnSkillAdded;
     public event Action<SkillNode> OnSkillRemoved;
     public event Action<SequenceMatchResult> OnSequenceMatched;
 
     #endregion
 
-    #region ¹¹Ôìº¯Êý
+    #region ï¿½ï¿½ï¿½ìº¯ï¿½ï¿½
 
     public SkillSequenceQueue() { }
 
@@ -116,46 +116,46 @@ public class SkillSequenceQueue
 
     #endregion
 
-    #region ¹«¹²·½·¨ - Ìí¼ÓÓëÒÆ³ý
+    #region ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ - ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ³ï¿½
 
     /// <summary>
-    /// Ìí¼Ó¼¼ÄÜ¼ÇÂ¼µ½¶ÓÁÐ
+    /// ï¿½ï¿½ï¿½Ó¼ï¿½ï¿½Ü¼ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     /// </summary>
-    /// <returns>Ìí¼ÓÊÇ·ñ³É¹¦</returns>
+    /// <returns>ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½É¹ï¿½</returns>
     public bool AddSkill(skilltype skillType)
     {
         float currentTime = Time.time;
 
-        // ×Ô¶¯ÇåÀí¹ýÆÚ¼ÇÂ¼
+        // ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú¼ï¿½Â¼
         if (_autoCleanup)
         {
             CleanupExpired(currentTime);
         }
 
-        // ¼ì²é¶ÓÁÐ´óÐ¡ÏÞÖÆ
+        // ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½
         if (_skillQueue.Count >= _maxQueueSize)
         {
             RemoveOldest();
         }
 
-        // ´´½¨ÐÂ½Úµã
+        // ï¿½ï¿½ï¿½ï¿½ï¿½Â½Úµï¿½
         var newNode = new SkillNode(currentTime, skillType);
 
-        // Ìí¼Óµ½¶ÓÁÐÎ²²¿
+        // ï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½ï¿½ï¿½Î²ï¿½ï¿½
         _skillQueue.AddLast(newNode);
         _totalAddedCount++;
 
-        // ¸üÐÂÍ³¼Æ
+        // ï¿½ï¿½ï¿½ï¿½Í³ï¿½ï¿½
         UpdateStats();
 
-        // ´¥·¢ÊÂ¼þ
+        // ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½
         OnSkillAdded?.Invoke(newNode);
 
         return true;
     }
 
     /// <summary>
-    /// ÅúÁ¿Ìí¼Ó¼¼ÄÜ¼ÇÂ¼
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¼ï¿½ï¿½Ü¼ï¿½Â¼
     /// </summary>
     public int AddSkills(IEnumerable<skilltype> skillType, float baseTime = 0f, float timeInterval = 0.5f)
     {
@@ -175,9 +175,9 @@ public class SkillSequenceQueue
     }
 
     /// <summary>
-    /// ÒÆ³ý×î¾ÉµÄ¼¼ÄÜ¼ÇÂ¼
+    /// ï¿½Æ³ï¿½ï¿½ï¿½ÉµÄ¼ï¿½ï¿½Ü¼ï¿½Â¼
     /// </summary>
-    /// <returns>±»ÒÆ³ýµÄ¼ÇÂ¼£¬Èç¹û¶ÓÁÐÎª¿ÕÔò·µ»Ønull</returns>
+    /// <returns>ï¿½ï¿½ï¿½Æ³ï¿½ï¿½Ä¼ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ò·µ»ï¿½null</returns>
     public SkillNode RemoveOldest()
     {
         if (_skillQueue.Count == 0) return null;
@@ -193,9 +193,9 @@ public class SkillSequenceQueue
     }
 
     /// <summary>
-    /// ÇåÀíËùÓÐ¹ýÆÚ¼ÇÂ¼£¨»ùÓÚµ±Ç°Ê±¼ä£©
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¹ï¿½ï¿½Ú¼ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½Ç°Ê±ï¿½ä£©
     /// </summary>
-    /// <returns>ÇåÀíµÄÊýÁ¿</returns>
+    /// <returns>ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½</returns>
     public int CleanupExpired(float currentTime = -1f)
     {
         if (currentTime < 0) currentTime = Time.time;
@@ -203,7 +203,7 @@ public class SkillSequenceQueue
         int count = 0;
         float expireTime = currentTime - _maxRecordTime;
 
-        // ÒÆ³ýËùÓÐÊ±¼ä´ÁÐ¡ÓÚexpireTimeµÄ¼ÇÂ¼
+        // ï¿½Æ³ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½expireTimeï¿½Ä¼ï¿½Â¼
         while (_skillQueue.Count > 0 && _skillQueue.First.Value.Timestamp < expireTime)
         {
             var removed = RemoveOldest();
@@ -214,7 +214,7 @@ public class SkillSequenceQueue
     }
 
     /// <summary>
-    /// Çå¿ÕÕû¸ö¶ÓÁÐ
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public void Clear()
     {
@@ -229,10 +229,10 @@ public class SkillSequenceQueue
      
     #endregion
 
-    #region ¹«¹²·½·¨ - ²éÑ¯Óë»ñÈ¡
+    #region ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ - ï¿½ï¿½Ñ¯ï¿½ï¿½ï¿½È¡
 
     /// <summary>
-    /// »ñÈ¡µ±Ç°¼¼ÄÜÐòÁÐ£¨½ö¼¼ÄÜID£©
+    /// ï¿½ï¿½È¡ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½IDï¿½ï¿½
     /// </summary>
     public List<skilltype> GetCurrentSequence()
     {
@@ -240,7 +240,7 @@ public class SkillSequenceQueue
     }
 
     /// <summary>
-    /// »ñÈ¡µ±Ç°¼¼ÄÜ½ÚµãÐòÁÐ
+    /// ï¿½ï¿½È¡ï¿½ï¿½Ç°ï¿½ï¿½ï¿½Ü½Úµï¿½ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public List<SkillNode> GetCurrentNodes()
     {
@@ -248,7 +248,7 @@ public class SkillSequenceQueue
     }
 
     /// <summary>
-    /// »ñÈ¡Ö¸¶¨Ê±¼ä·¶Î§ÄÚµÄ¼¼ÄÜÐòÁÐ
+    /// ï¿½ï¿½È¡Ö¸ï¿½ï¿½Ê±ï¿½ä·¶Î§ï¿½ÚµÄ¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public List<skilltype> GetSequenceInTimeRange(float startTime, float endTime)
     {
@@ -259,7 +259,7 @@ public class SkillSequenceQueue
     }
 
     /// <summary>
-    /// »ñÈ¡×î½üµÄN¸ö¼¼ÄÜ
+    /// ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½Nï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public List<skilltype> GetRecentSkills(int count)
     {
@@ -272,7 +272,7 @@ public class SkillSequenceQueue
     }
 
     /// <summary>
-    /// »ñÈ¡×î½üÒ»¸ö¼¼ÄÜ
+    /// ï¿½ï¿½È¡ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public skilltype GetLastSkill()
     {
@@ -280,7 +280,7 @@ public class SkillSequenceQueue
     }
 
     /// <summary>
-    /// »ñÈ¡×î½üÒ»¸ö¼¼ÄÜ½Úµã
+    /// ï¿½ï¿½È¡ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Ü½Úµï¿½
     /// </summary>
     public SkillNode GetLastNode()
     {
@@ -288,7 +288,7 @@ public class SkillSequenceQueue
     }
 
     /// <summary>
-    /// »ñÈ¡Ö¸¶¨Ë÷ÒýµÄ¼¼ÄÜ
+    /// ï¿½ï¿½È¡Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½
     /// </summary>
     public skilltype GetSkillAt(int index)
     {
@@ -298,7 +298,7 @@ public class SkillSequenceQueue
     }
 
     /// <summary>
-    /// »ñÈ¡Ö¸¶¨Ë÷ÒýµÄ¼¼ÄÜ½Úµã
+    /// ï¿½ï¿½È¡Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½Ü½Úµï¿½
     /// </summary>
     public SkillNode GetNodeAt(int index)
     {
@@ -308,7 +308,7 @@ public class SkillSequenceQueue
     }
 
     /// <summary>
-    /// ¼ì²éÐòÁÐÊÇ·ñ°üº¬Ö¸¶¨¼¼ÄÜ
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public bool Contains(skilltype skillId)
     {
@@ -316,7 +316,7 @@ public class SkillSequenceQueue
     }
 
     /// <summary>
-    /// ¼ì²éÐòÁÐÊÇ·ñÒÔÖ¸¶¨¼¼ÄÜÐòÁÐ¿ªÍ·
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¿ï¿½Í·
     /// </summary>
     public bool StartsWith(IEnumerable<skilltype> sequence)
     {
@@ -337,7 +337,7 @@ public class SkillSequenceQueue
     }
 
     /// <summary>
-    /// ¼ì²éÐòÁÐÊÇ·ñÒÔÖ¸¶¨¼¼ÄÜÐòÁÐ½áÎ²
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð½ï¿½Î²
     /// </summary>
     public bool EndsWith(IEnumerable<skilltype> sequence)
     {
@@ -346,7 +346,7 @@ public class SkillSequenceQueue
         var seqArray = sequence.ToArray();
         if (seqArray.Length == 0 || seqArray.Length > _skillQueue.Count) return false;
 
-        // ´Ó¶ÓÁÐÄ©Î²¿ªÊ¼±È½Ï
+        // ï¿½Ó¶ï¿½ï¿½ï¿½Ä©Î²ï¿½ï¿½Ê¼ï¿½È½ï¿½
         var queueArray = _skillQueue.Select(n => n.SkillType).ToArray();
         int queueIndex = queueArray.Length - seqArray.Length;
 
@@ -359,9 +359,9 @@ public class SkillSequenceQueue
     }
 
     /// <summary>
-    /// ²éÕÒ¼¼ÄÜÔÚÐòÁÐÖÐµÄÎ»ÖÃ
+    /// ï¿½ï¿½ï¿½Ò¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½Î»ï¿½ï¿½
     /// </summary>
-    /// <returns>ËùÓÐÕÒµ½µÄÎ»ÖÃË÷ÒýÁÐ±í</returns>
+    /// <returns>ï¿½ï¿½ï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½</returns>
     public List<int> FindAllPositions(skilltype skillId)
     {
         var positions = new List<int>();
@@ -380,7 +380,7 @@ public class SkillSequenceQueue
     }
 
     /// <summary>
-    /// »ñÈ¡¼¼ÄÜÆµÂÊÍ³¼Æ
+    /// ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Æµï¿½ï¿½Í³ï¿½ï¿½
     /// </summary>
     public Dictionary<skilltype, int> GetSkillFrequency()
     {
@@ -402,7 +402,7 @@ public class SkillSequenceQueue
     }
 
     /// <summary>
-    /// »ñÈ¡¶ÓÁÐÍ³¼ÆÐÅÏ¢
+    /// ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Í³ï¿½ï¿½ï¿½ï¿½Ï¢
     /// </summary>
     public QueueStats GetStats()
     {
@@ -410,7 +410,7 @@ public class SkillSequenceQueue
     }
 
     /// <summary>
-    /// »ñÈ¡ÒÆ³ýµÄÀúÊ·¼ÇÂ¼
+    /// ï¿½ï¿½È¡ï¿½Æ³ï¿½ï¿½ï¿½ï¿½ï¿½Ê·ï¿½ï¿½Â¼
     /// </summary>
     public List<SkillNode> GetRemovedHistory()
     {
@@ -419,10 +419,10 @@ public class SkillSequenceQueue
 
     #endregion
 
-    #region ¹«¹²·½·¨ - ÐòÁÐÆ¥Åä
+    #region ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ - ï¿½ï¿½ï¿½ï¿½Æ¥ï¿½ï¿½
 
     /// <summary>
-    /// ¼ì²éÊÇ·ñÆ¥ÅäÖ¸¶¨ÐòÁÐ
+    /// ï¿½ï¿½ï¿½ï¿½Ç·ï¿½Æ¥ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public SequenceMatchResult MatchSequence(IEnumerable<skilltype> targetSequence, bool exactOrder = true,
                                              float maxTimeWindow = -1f, int startIndex = 0)
@@ -442,7 +442,7 @@ public class SkillSequenceQueue
             return result;
         }
 
-        // Èç¹ûÖ¸¶¨ÁË¿ªÊ¼Ë÷Òý£¬µ÷ÕûËÑË÷·¶Î§
+        // ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½Ë¿ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î§
         int searchStart = Mathf.Max(0, startIndex);
         int availableCount = _skillQueue.Count - searchStart;
 
@@ -452,12 +452,12 @@ public class SkillSequenceQueue
             return result;
         }
 
-        // ¾«È·Ë³ÐòÆ¥Åä
+        // ï¿½ï¿½È·Ë³ï¿½ï¿½Æ¥ï¿½ï¿½
         if (exactOrder)
         {
             return MatchExactSequence(targetList, searchStart, maxTimeWindow);
         }
-        // Ä£ºýÆ¥Åä£¨Ö»ÐèÒª°üº¬ÕâÐ©¼¼ÄÜ£¬²»ÒªÇóË³Ðò£©
+        // Ä£ï¿½ï¿½Æ¥ï¿½ä£¨Ö»ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð©ï¿½ï¿½ï¿½Ü£ï¿½ï¿½ï¿½Òªï¿½ï¿½Ë³ï¿½ï¿½
         else
         {
             return MatchFuzzySequence(targetList, searchStart, maxTimeWindow);
@@ -465,7 +465,7 @@ public class SkillSequenceQueue
     }
 
     /// <summary>
-    /// ¼ì²éÊÇ·ñÆ¥ÅäÈÎºÎ¸ø¶¨µÄÐòÁÐ
+    /// ï¿½ï¿½ï¿½ï¿½Ç·ï¿½Æ¥ï¿½ï¿½ï¿½ÎºÎ¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public SequenceMatchResult MatchAnySequence(IEnumerable<IEnumerable<skilltype>> sequences,
                                                 bool exactOrder = true, float maxTimeWindow = -1f)
@@ -488,7 +488,7 @@ public class SkillSequenceQueue
     }
 
     /// <summary>
-    /// ²éÕÒËùÓÐÆ¥ÅäµÄÐòÁÐ
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public List<SequenceMatchResult> FindAllMatches(IEnumerable<skilltype> targetSequence,
                                                     bool exactOrder = true, float maxTimeWindow = -1f)
@@ -502,7 +502,7 @@ public class SkillSequenceQueue
         if (targetList.Count == 0)
             return results;
 
-        // ´ÓÃ¿¸ö¿ÉÄÜµÄÎ»ÖÃ¿ªÊ¼³¢ÊÔÆ¥Åä
+        // ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½Üµï¿½Î»ï¿½Ã¿ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½Æ¥ï¿½ï¿½
         for (int startIndex = 0; startIndex <= _skillQueue.Count - targetList.Count; startIndex++)
         {
             var result = MatchSequence(targetList, exactOrder, maxTimeWindow, startIndex);
@@ -516,7 +516,7 @@ public class SkillSequenceQueue
     }
 
     /// <summary>
-    /// ²éÕÒ×î³¤µÄÁ¬ÐøÆ¥ÅäÐòÁÐ
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½î³¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public SequenceMatchResult FindLongestMatch(IEnumerable<IEnumerable<skilltype>> possibleSequences,
                                                 float maxTimeWindow = -1f)
@@ -530,7 +530,7 @@ public class SkillSequenceQueue
         {
             var seqList = sequence.ToList();
             if (seqList.Count <= bestMatch.MatchedSequence.Count)
-                continue; // ±Èµ±Ç°×î¼ÑÆ¥Åä¶Ì£¬Ìø¹ý
+                continue; // ï¿½Èµï¿½Ç°ï¿½ï¿½ï¿½Æ¥ï¿½ï¿½Ì£ï¿½ï¿½ï¿½ï¿½ï¿½
 
             var result = MatchSequence(seqList, true, maxTimeWindow);
             if (result.IsMatch && result.MatchedSequence.Count > bestMatch.MatchedSequence.Count)
@@ -544,83 +544,67 @@ public class SkillSequenceQueue
 
     #endregion
 
-    #region Ë½ÓÐ·½·¨ - Æ¥ÅäËã·¨
+    #region Ë½ï¿½Ð·ï¿½ï¿½ï¿½ - Æ¥ï¿½ï¿½ï¿½ã·¨
 
     /// <summary>
-    /// ¾«È·Ë³ÐòÆ¥Åä
+    /// ï¿½ï¿½È·Ë³ï¿½ï¿½Æ¥ï¿½ï¿½
     /// </summary>
     private SequenceMatchResult MatchExactSequence(List<skilltype> targetSequence, int startIndex, float maxTimeWindow)
     {
         var result = new SequenceMatchResult();
-        var matchedNodes = new List<SkillNode>();
+        var matchedNodes = _skillQueue
+            .Skip(startIndex)
+            .Take(targetSequence.Count)
+            .ToList();
 
-        // ÊÕ¼¯Æ¥ÅäµÄ½Úµã
-        int queueIndex = 0;
-        int matchIndex = 0;
-
-        foreach (var node in _skillQueue)
-        {
-            if (queueIndex < startIndex)
-            {
-                queueIndex++;
-                continue;
-            }
-
-            if (matchIndex >= targetSequence.Count)
-                break;
-
-            if (node.SkillType == targetSequence[matchIndex])
-            {
-                matchedNodes.Add(node);
-            }
-            if (matchedNodes.Count != 0)
-            {
-                matchIndex++;
-            }
-            queueIndex++;
-        }
-
-        // ¼ì²éÊÇ·ñÍêÈ«Æ¥Åä
-        if (matchIndex != targetSequence.Count)
+        if (matchedNodes.Count < targetSequence.Count)
         {
             result.IsMatch = false;
             return result;
         }
 
-        // ¼ì²éÊ±¼ä´°¿Ú
-        if (maxTimeWindow > 0 && matchedNodes.Count > 0)
+        for (int i = 0; i < targetSequence.Count; i++)
         {
-            float totalTime = matchedNodes.Last().Timestamp - matchedNodes.First().Timestamp;
-            if (totalTime > maxTimeWindow)
+            if (matchedNodes[i].SkillType != targetSequence[i])
             {
                 result.IsMatch = false;
                 return result;
             }
-
-            result.TotalTime = totalTime;
-            result.MatchAccuracy = 1f - Mathf.Clamp01(totalTime / maxTimeWindow);
         }
 
-        // ¹¹½¨³É¹¦½á¹û
+        if (matchedNodes.Count > 0)
+        {
+            result.TotalTime = matchedNodes.Last().Timestamp - matchedNodes.First().Timestamp;
+
+            if (maxTimeWindow > 0)
+            {
+                if (result.TotalTime > maxTimeWindow)
+                {
+                    result.IsMatch = false;
+                    return result;
+                }
+
+                result.MatchAccuracy = 1f - Mathf.Clamp01(result.TotalTime / maxTimeWindow);
+            }
+        }
+
         result.IsMatch = true;
         result.MatchedSequence = new List<skilltype>(targetSequence);
         result.MatchedNodes = matchedNodes.Select(n => n.Clone()).ToList();
         result.StartIndex = startIndex;
 
-        // ´¥·¢ÊÂ¼þ
         OnSequenceMatched?.Invoke(result);
 
         return result;
     }
 
     /// <summary>
-    /// Ä£ºýÆ¥Åä£¨¼¯ºÏ°üº¬£©
+    /// Ä£ï¿½ï¿½Æ¥ï¿½ä£¨ï¿½ï¿½ï¿½Ï°ï¿½ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     private SequenceMatchResult MatchFuzzySequence(List<skilltype> targetSequence, int startIndex, float maxTimeWindow)
     {
         var result = new SequenceMatchResult();
 
-        // »ñÈ¡Ö¸¶¨·¶Î§ÄÚµÄ¼¼ÄÜ
         var candidateNodes = _skillQueue
             .Skip(startIndex)
             .ToList();
@@ -631,7 +615,6 @@ public class SkillSequenceQueue
             return result;
         }
 
-        // ¼ì²éÊ±¼ä´°¿Ú
         if (maxTimeWindow > 0 && candidateNodes.Count > 0)
         {
             float totalTime = candidateNodes.Last().Timestamp - candidateNodes.First().Timestamp;
@@ -642,22 +625,17 @@ public class SkillSequenceQueue
             }
         }
 
-        // ¼ì²éÊÇ·ñ°üº¬ËùÓÐÄ¿±ê¼¼ÄÜ
         var candidateSkills = candidateNodes.Select(n => n.SkillType).ToList();
-        
-        for (int i = 0; i < targetSequence.Count; i++) 
+
+        for (int i = 0; i < targetSequence.Count; i++)
         {
-            if (Contains(targetSequence[i]))
+            if (!candidateSkills.Contains(targetSequence[i]))
             {
-                continue;
+                result.IsMatch = false;
+                return result;
             }
-            result.IsMatch = false;
-            return result;
         }
 
-
-
-        // ¹¹½¨³É¹¦½á¹û
         result.IsMatch = true;
         result.MatchedSequence = candidateSkills;
         result.MatchedNodes = candidateNodes.Select(n => n.Clone()).ToList();
@@ -672,7 +650,6 @@ public class SkillSequenceQueue
             }
         }
 
-        // ´¥·¢ÊÂ¼þ
         OnSequenceMatched?.Invoke(result);
 
         return result;
@@ -680,10 +657,10 @@ public class SkillSequenceQueue
 
     #endregion
 
-    #region Ë½ÓÐ·½·¨ - ¹¤¾ß·½·¨
+    #region Ë½ï¿½Ð·ï¿½ï¿½ï¿½ - ï¿½ï¿½ï¿½ß·ï¿½ï¿½ï¿½
 
     /// <summary>
-    /// ¸üÐÂÍ³¼ÆÐÅÏ¢
+    /// ï¿½ï¿½ï¿½ï¿½Í³ï¿½ï¿½ï¿½ï¿½Ï¢
     /// </summary>
     private void UpdateStats()
     {
@@ -708,20 +685,20 @@ public class SkillSequenceQueue
 
     #endregion
 
-    #region ÊôÐÔ·ÃÎÊÆ÷
+    #region ï¿½ï¿½ï¿½Ô·ï¿½ï¿½ï¿½ï¿½ï¿½
 
     /// <summary>
-    /// »ñÈ¡¶ÓÁÐÖÐµÄ¼¼ÄÜÊýÁ¿
+    /// ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ÐµÄ¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public int Count => _skillQueue.Count;
 
     /// <summary>
-    /// ¶ÓÁÐÊÇ·ñÎª¿Õ
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½Îªï¿½ï¿½
     /// </summary>
     public bool IsEmpty => _skillQueue.Count == 0;
 
     /// <summary>
-    /// ×î´ó¼ÇÂ¼Ê±¼ä£¨Ãë£©
+    /// ï¿½ï¿½ï¿½ï¿½Â¼Ê±ï¿½ä£¨ï¿½ë£©
     /// </summary>
     public float MaxRecordTime
     {
@@ -730,7 +707,7 @@ public class SkillSequenceQueue
     }
 
     /// <summary>
-    /// ×î´ó¶ÓÁÐ´óÐ¡
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½Ð¡
     /// </summary>
     public int MaxQueueSize
     {
@@ -739,7 +716,7 @@ public class SkillSequenceQueue
     }
 
     /// <summary>
-    /// ÊÇ·ñ×Ô¶¯ÇåÀí
+    /// ï¿½Ç·ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public bool AutoCleanup
     {
@@ -748,7 +725,7 @@ public class SkillSequenceQueue
     }
 
     /// <summary>
-    /// ×ÜÌí¼Ó´ÎÊý
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½Ó´ï¿½ï¿½ï¿½
     /// </summary>
     public int TotalAddedCount => _totalAddedCount;
 
@@ -757,26 +734,26 @@ public class SkillSequenceQueue
 }
 
 /// <summary>
-/// ¼¼ÄÜÐòÁÐ¶ÓÁÐµÄµ÷ÊÔÏÔÊ¾¹¤¾ß
+/// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½ÐµÄµï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½
 /// </summary>
 public static class SkillSequenceQueueExtensions
 {
     /// <summary>
-    /// ½«¼¼ÄÜÐòÁÐ×ª»»Îª¿ÉÊÓ»¯×Ö·û´®
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½Îªï¿½ï¿½ï¿½Ó»ï¿½ï¿½Ö·ï¿½ï¿½ï¿½
     /// </summary>
     public static string ToVisualString(this SkillSequenceQueue queue, bool includeTimestamps = true)
     {
         if (queue == null) return "null";
 
         var nodes = queue.GetCurrentNodes();
-        if (nodes.Count == 0) return "¿Õ¶ÓÁÐ";
+        if (nodes.Count == 0) return "ï¿½Õ¶ï¿½ï¿½ï¿½";
 
         var sb = new System.Text.StringBuilder();
-        sb.Append("¼¼ÄÜÐòÁÐ: ");
+        sb.Append("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: ");
 
         for (int i = 0; i < nodes.Count; i++)
         {
-            if (i > 0) sb.Append(" ¡ú ");
+            if (i > 0) sb.Append(" ï¿½ï¿½ ");
 
             if (includeTimestamps)
             {
@@ -793,9 +770,9 @@ public static class SkillSequenceQueueExtensions
     }
 
     /// <summary>
-    /// ´òÓ¡¶ÓÁÐÏêÏ¸ÐÅÏ¢
+    /// ï¿½ï¿½Ó¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½ï¿½Ï¢
     /// </summary>
-    public static void PrintDebugInfo(this SkillSequenceQueue queue, string label = "¼¼ÄÜ¶ÓÁÐ")
+    public static void PrintDebugInfo(this SkillSequenceQueue queue, string label = "ï¿½ï¿½ï¿½Ü¶ï¿½ï¿½ï¿½")
     {
         if (queue == null)
         {
@@ -807,10 +784,10 @@ public static class SkillSequenceQueueExtensions
         var sequence = queue.GetCurrentSequence();
 
         Debug.Log($"{label}:\n" +
-                  $"  ÊýÁ¿: {stats.ActiveCount}/{stats.TotalCount}\n" +
-                  $"  Ê±¼ä¿ç¶È: {stats.TimeSpan:F2}s\n" +
-                  $"  ÐòÁÐ: {string.Join("¡ú", sequence)}\n" +
-                  $"  ÆµÂÊ: {string.Join(", ", stats.SkillFrequency.Select(kv => $"{kv.Key}:{kv.Value}"))}"
+                  $"  ï¿½ï¿½ï¿½ï¿½: {stats.ActiveCount}/{stats.TotalCount}\n" +
+                  $"  Ê±ï¿½ï¿½ï¿½ï¿½: {stats.TimeSpan:F2}s\n" +
+                  $"  ï¿½ï¿½ï¿½ï¿½: {string.Join("ï¿½ï¿½", sequence)}\n" +
+                  $"  Æµï¿½ï¿½: {string.Join(", ", stats.SkillFrequency.Select(kv => $"{kv.Key}:{kv.Value}"))}"
                   );
     }
 }
