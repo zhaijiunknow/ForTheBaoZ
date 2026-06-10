@@ -15,13 +15,27 @@ public class InputManager : MonoBehaviour, IGameManager
     //如果你需要添加新的action引用，遵循注释(step 1-4)添加即可
     #region Player map
     public bool OpenMenu { get; private set; }
-    public Vector2 Movement { get; private set; }
-    public bool Jump { get; private set; }
+
+
+    public bool No1 { get; private set; }
+    public bool No2 { get; private set; }
+    public bool No3 { get; private set; }
+    public bool No4 { get; private set; }
+    public bool No5 { get; private set; }
+    public bool No6 { get; private set; }
+    public bool No7 { get; private set; }
     // public bool YourAction { get; private set; } //step 1
 
     private InputAction openMenuAction;
-    private InputAction moveAction;
-    private InputAction jumpAction;
+    private InputAction No1Action;
+    private InputAction No2Action;
+    private InputAction No3Action;
+    private InputAction No4Action;
+    private InputAction No5Action;
+    private InputAction No6Action;
+    private InputAction No7Action;
+
+
     // private InputAction yourAction; //step 2
     #endregion
 
@@ -74,8 +88,13 @@ public class InputManager : MonoBehaviour, IGameManager
     void InitInputAction()
     {
         //Player map
-        moveAction = playerInput.actions["Move"];
-        jumpAction = playerInput.actions["Jump"];
+        No1Action = playerInput.actions["No1"];
+        No2Action = playerInput.actions["No2"];
+        No3Action = playerInput.actions["No3"];
+        No4Action = playerInput.actions["No4"];
+        No5Action = playerInput.actions["No5"];
+        No6Action = playerInput.actions["No6"];
+        No7Action = playerInput.actions["No7"];
         openMenuAction = playerInput.actions["OpenMenu"];
         // yourAction = playerInput.actions["YourAction"]; //step 3
 
@@ -88,8 +107,13 @@ public class InputManager : MonoBehaviour, IGameManager
     void UpdateInputAction()
     {
         //Player map
-        Movement = moveAction.ReadValue<Vector2>();
-        Jump = jumpAction.WasPressedThisFrame();
+        No1 = No1Action.WasPressedThisFrame();
+        No2 = No2Action.WasPressedThisFrame();
+        No3 = No3Action.WasPressedThisFrame();
+        No4 = No4Action.WasPressedThisFrame();
+        No5 = No5Action.WasPressedThisFrame();
+        No6 = No6Action.WasPressedThisFrame();
+        No7 = No7Action.WasPressedThisFrame();
         OpenMenu = openMenuAction.WasPressedThisFrame();
         // YourAction = yourAction.WasPressedThisFrame(); //step 4
 

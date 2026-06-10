@@ -1,6 +1,6 @@
 Name,1en,2cn,3jp
 Text,,,
-GameTitle,Your Game Title,你的游戏标题,ゲームタイトル
+GameTitle,ForTheBaoZi,为了包子,バオズのために
 Wait,Waiting,等待输入,入力待ち
 Saved,Changes saved,修改已保存,変更が保存されました
 Test,"If it is a long sentence, use Excel to edit and export CSV file.","如句子包含英文逗号, 请用Excel编辑并导出CSV文件","If it is a long sentence, use Excel to edit and export CSV file."
@@ -23,8 +23,13 @@ Continue,Resume,继续游戏,再開
 GoTitle,Back to title,返回标题,タイトルに戻る
 ,,,
 Input(Player map),,,
-Move,Move,移动,移動
-Jump,Jump,跳跃,ジャンプ
+No1,Button1,按钮1,按钮1
+No2,Button2,按钮2,按钮2
+No3,Button3,按钮3,按钮3
+No4,Button4,按钮4,按钮4
+No5,Button5,按钮5,按钮5
+No6,Button6,按钮6,按钮6
+No7,Button7,按钮7,按钮7
 OpenMenu,OpenMenu,菜单,メニュー
 ,,,
 Input(UI map),,,

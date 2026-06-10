@@ -44,9 +44,6 @@ public class DataManager : MonoBehaviour, IGameManager
         Status = ManagerStatus.Started;
     }
 
-    void Update()
-    {
-    }
 
     public void ChangeSaveData(OptionName optionName, int value)
     {
